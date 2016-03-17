@@ -13,8 +13,19 @@ public class MainInterface extends JFrame implements ActionListener {
 	JPanel jp=new JPanel(); 
 	Container cp=getContentPane();
 	String username; 
+	boolean isLoggedIn = false;
 	
 	MainInterface(String username) { 
+//		if (isLoggedIn = false)
+//		{
+//			new Login();
+//			this.setEnabled(false);
+//		}
+//		else
+//		{
+//			this.setEnabled(true);
+//		}
+		
 		this.username=username; 
 		cp.add(mb,"North"); 
 		/*
@@ -82,7 +93,7 @@ public class MainInterface extends JFrame implements ActionListener {
 		ManaSystem.add(outsystem);     
 		headspace.add(space_2); 
 		headspace.add(space_1);
-		usersetting.add(adduser);
+		checkIn.add(adduser);
 		usersetting.add(changepwd);        
 		usersetting.add(usetspace);    
 		GetHelp.add(aboutauthor);    
@@ -127,7 +138,9 @@ public class MainInterface extends JFrame implements ActionListener {
 			jp.setBackground(Color.white);   
 		} 
 		if (e.getSource()==outsystem){ 
-			System.exit(0);   
+			System.exit(0);
+			//new Login();
+			
 		} 
 		if (e.getSource()==changepwd){ 
 			//null;
