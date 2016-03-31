@@ -1,14 +1,24 @@
+package medProgram;
+
 import java.sql.*; 
 import java.awt.*; 
 import java.awt.event.*; 
 import java.util.*; 
 import javax.swing.*; 
 import javax.swing.border.*; 
+
+import javax.swing.JDesktopPane;
+import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
+
 public class MainInterface extends JFrame implements ActionListener { 
+	
+	JDesktopPane gui = new JDesktopPane();
+	
 	JMenuBar mb = new JMenuBar();  
 	JMenu  ManaSystem,appoViewer,checkIn,medRecord,headspace,usersetting,GetHelp; 
 	JMenuItem  outsystem,patientinfo,patientinfo1,addHospital,dropHospital,space_2,changepwd,adduser,aboutauthor,aboutsystem,space_1,usehelp,background,color1,manspace_1, 
- color2,color3,usetspace;  
+ color2,color3,usetspace, openApptViewer, openCheckIn;  
 	JMenu backcolor;  
 	JPanel jp=new JPanel(); 
 	Container cp=getContentPane();
@@ -54,7 +64,9 @@ public class MainInterface extends JFrame implements ActionListener {
 		background=new JMenuItem("Backgrond Color");      
 		color1=new JMenuItem("White");      
 		color2=new JMenuItem("Gray");      
-  		color3=new JMenuItem("Black"); 
+  		color3=new JMenuItem("Black");
+  		openApptViewer=new JMenuItem("Open Appointment Viewer");
+  		openCheckIn=new JMenuItem("Open Check In");
 		background.add(backcolor);     
 		backcolor.add(color1);         
 		backcolor.add(color2);         
@@ -93,7 +105,8 @@ public class MainInterface extends JFrame implements ActionListener {
 		ManaSystem.add(outsystem);     
 		headspace.add(space_2); 
 		headspace.add(space_1);
-		checkIn.add(adduser);
+		checkIn.add(openCheckIn);
+		appoViewer.add(openApptViewer);
 		usersetting.add(changepwd);        
 		usersetting.add(usetspace);    
 		GetHelp.add(aboutauthor);    
@@ -111,11 +124,13 @@ public class MainInterface extends JFrame implements ActionListener {
 		aboutauthor.addActionListener(this);      
 		aboutsystem.addActionListener(this);   
 		usehelp.addActionListener(this);
+		openApptViewer.addActionListener(this);
+		openCheckIn.addActionListener(this);		
 		
 		jp.setLayout(new BorderLayout());       
 		JLabel label1 = new JLabel();   
 		jp.add(label1); 
-		JLabel  JL=new JLabel("<html><font color=#4F4F4F size='14'><i>Welcome to Group 6  Medical Program!<br><hr>"  + 
+		JLabel  JL=new JLabel("<html><font color=#4F4F4F size='14'><i>Group 6  Medical Program<br><hr>"  + 
           "</i></font>",SwingConstants.CENTER);  
 		jp.add(JL); 
 		JScrollPane scrollpane=new JScrollPane(jp);  
@@ -124,9 +139,10 @@ public class MainInterface extends JFrame implements ActionListener {
 		jp.setBackground(Color.lightGray);    
 		setSize(1100,600);       
 		setVisible(true); 
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);  
+		
+		this.setLocationRelativeTo(getParent());
 	}
-
 	public void actionPerformed(ActionEvent e)  { 
 		if (e.getSource()==color3){ 
 			jp.setBackground(Color.BLACK);   
@@ -138,8 +154,8 @@ public class MainInterface extends JFrame implements ActionListener {
 			jp.setBackground(Color.white);   
 		} 
 		if (e.getSource()==outsystem){ 
-			System.exit(0);
-			//new Login();
+			new Login();
+			this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
 			
 		} 
 		if (e.getSource()==changepwd){ 
@@ -149,28 +165,31 @@ public class MainInterface extends JFrame implements ActionListener {
 			//null;   
 		} 
 		if (e.getSource()==aboutauthor){ 
-			JOptionPane.showMessageDialog(this,"     ");   
+			JOptionPane.showMessageDialog(this,"This feature has not been implemented yet.");   
 		}
 		if (e.getSource()==aboutsystem){ 
-			JOptionPane.showMessageDialog(this,""); 
+			JOptionPane.showMessageDialog(this,"This feature has not been implemented yet."); 
 		} 
 		if (e.getSource()==usehelp){ 
-			JOptionPane.showMessageDialog(this,"");   
+			JOptionPane.showMessageDialog(this,"This feature has not been implemented yet.");   
 		}
 
 		//CHECK IN
-		if (e.getSource()==checkIn){ 
-			//  null;
+		if (e.getSource()==openCheckIn){ 
+			
+			Search patient = new Search();
+			patient.main();
 		} 
    
 		//APPONTMENT VIEW
-		if (e.getSource()==appoViewer){ 
-			// null;  
+		if (e.getSource()==openApptViewer){ 
+			AppointmentViewer av = new AppointmentViewer();
+			av.main();
 		} 
    
 		//MEDICAL RECORD
 		if (e.getSource()==medRecord){ 
-			//   null;
+			JOptionPane.showMessageDialog(this,"This feature has not been implemented yet.");
 		} 
 	}
 

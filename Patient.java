@@ -1,4 +1,4 @@
-package test;
+package medProgram;
 
 import java.util.Date;
 import java.util.Scanner;
@@ -6,12 +6,13 @@ import java.util.Scanner;
 public class Patient 
 {
 		String first,last,visit,status;
-		int ID;
+		int ID, apptId;
 		Date apttime;
 		String email;
 		
-		Patient(int ID_number,String firstname, String lastname, Date appointmenttime, String visit_reason, String status_desc)
+		Patient(int apptIdNum, int ID_number,String firstname, String lastname, Date appointmenttime, String visit_reason, String status_desc)
 		{
+			apptId = apptIdNum;
 			ID = ID_number;
 			first = firstname;
 			last = lastname;
@@ -31,6 +32,11 @@ public class Patient
 		
 		public void getName()
 		{
+		}
+		
+		public int getAppointmentId()
+		{
+			return apptId;
 		}
 		
 		public int getID()

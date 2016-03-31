@@ -1,10 +1,11 @@
-package test;
+package medProgram;
 
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import java.awt.GridLayout;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JTextField;
@@ -29,7 +30,7 @@ public class Search {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
+	public static void main() {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -65,9 +66,10 @@ public class Search {
 	private void initialize() {
 		frmCheckin = new JFrame();
 		frmCheckin.setTitle("Check-In");
-		frmCheckin.setBounds(100, 100, 406, 203);
-		frmCheckin.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmCheckin.setBounds(100, 100, 320, 235);
+		frmCheckin.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frmCheckin.getContentPane().setLayout(null);
+		frmCheckin.setLocationRelativeTo(null);
 		
 		JLabel lblNewLabel = new JLabel("Input patient's name to search:");
 		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
@@ -87,7 +89,7 @@ public class Search {
 		final JLabel lblError = new JLabel("Patient's name was not found");
 		lblError.setVisible(false);
 		lblError.setForeground(Color.RED);
-		lblError.setBounds(99, 87, 191, 16);
+		lblError.setBounds(54, 87, 191, 16);
 		frmCheckin.getContentPane().add(lblError);
 		
 		First_Name = new JTextField();
@@ -118,30 +120,37 @@ public class Search {
 					Connection conn=DriverManager.getConnection("jdbc:mysql://99.98.84.144:3306/medprogram", "root", "medProgram");
 					Statement stmt = conn.createStatement();
 					ResultSet rs;
-					rs = stmt.executeQuery("SELECT ph.patientid,ph.firstname,ph.lastname,ap.appttime,ap.visitreason,st.statusdesc FROM medprogram.patientheader ph JOIN medprogram.appointments ap on ap.patientid = ph.patientid JOIN medprogram.status st on st.statusid = ap.checkinstatus "
-							+ "WHERE ph.firstname like '%" + First_Name.getText() + "%' and ph.lastname like '%" + Last_Name.getText() + "%'");
+					rs = stmt.executeQuery("SELECT ap.apptid, ph.patientid,ph.firstname,ph.lastname,ap.appttime,ap.visitreason,st.statusdesc FROM medprogram.patientheader ph JOIN medprogram.appointments ap on ap.patientid = ph.patientid JOIN medprogram.status st on st.statusid = ap.checkinstatus "
+							+ "WHERE ap.isdeleted = 0 and ph.firstname like '%" + First_Name.getText() + "%' and ph.lastname like '%" + Last_Name.getText() + "%'");
 					String test = null;
 					int count = 0;
 					if(rs.next()){
 						do{
+							int apptId = rs.getInt("apptid");
 							int ID = rs.getInt("patientid");
 							String first = rs.getString("firstname");
 							String last = rs.getString("lastname");
-							Date apt_time = rs.getDate("appttime");
+							Timestamp apt_time = rs.getTimestamp("appttime");
 							String visit_reason = rs.getString("visitreason");
 							String status = rs.getString("statusdesc");
-							if(status == "Not Checked In")
+							if(status.equals("Not Checked In"))
 							{
 								status = "";
 							}
-							String date_string = String.format("%15tc", apt_time);
-							test = String.format("%1d %21s %1s %45s %20s %35s",ID,first,last,date_string,visit_reason,status);
+							//java.util.Date apptDateTime = new java.util.Date(apt_time.getTime());
+							java.text.SimpleDateFormat sdf = 
+									new java.text.SimpleDateFormat("MM-dd-yyyy HH:mm");
+							
+							String appt = sdf.format(apt_time);
+							
+							//String date_string = String.format("%15tc", apt_time);
+							test = String.format("%1d %21s %1s %45s %20s %35s",ID,first,last,appt.toString(),visit_reason,status);
 							System.out.println(test);
 							listModel.addElement(test);
-							patients.add(new Patient(ID,first,last,apt_time,visit_reason,status));
+							patients.add(new Patient(apptId, ID,first,last,apt_time,visit_reason,status));
 						}while(rs.next());
 						List.NewScreen(listModel, patients);
-						frmCheckin.setVisible(false);
+						frmCheckin.dispose();
 						conn.close();
 					}
 					else{
@@ -161,21 +170,34 @@ public class Search {
 		JButton btnClose = new JButton("Close");
 		btnClose.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
+				frmCheckin.dispose();
 			}
 		});
-		btnClose.setBounds(274, 115, 106, 38);
+		btnClose.setBounds(145, 165, 106, 38);
 		frmCheckin.getContentPane().add(btnClose);
 		
-		JButton btnAddUser = new JButton("Add User");
-		btnAddUser.addActionListener(new ActionListener(){
+		JButton btnAddPatient = new JButton("Add Patient");
+		btnAddPatient.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				
 				System.out.println("test");
 			}
 		});
-		btnAddUser.setBounds(144, 115, 106, 38);
-		frmCheckin.getContentPane().add(btnAddUser);
+		btnAddPatient.setBounds(144, 115, 106, 38);
+		frmCheckin.getContentPane().add(btnAddPatient);	
 		
+		JButton btnCreate = new JButton("Create Appointment");
+		btnCreate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//JOptionPane.showMessageDialog(null,"This feature has not been implemented yet.");
+				CreateAppt ca = new CreateAppt();
+				ca.main();
+				frmCheckin.dispose();
+				
+			}
+		});
+		btnCreate.setFont(new Font("Lucida Grande", Font.PLAIN, 10));
+		btnCreate.setBounds(5, 165, 116, 38);
+		frmCheckin.getContentPane().add(btnCreate);
 	}
 }

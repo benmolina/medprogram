@@ -1,4 +1,4 @@
-package test;
+package medProgram;
 
 import java.awt.EventQueue;
 import java.util.ArrayList;
@@ -10,10 +10,14 @@ import javax.swing.JTable;
 import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.AbstractListModel;
 import java.sql.*;
 import javax.swing.JButton;
+import javax.swing.JDialog;
+
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 import java.awt.event.ActionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
@@ -62,8 +66,10 @@ public class List {
 		frmSearchResultsFor = new JFrame();
 		frmSearchResultsFor.setTitle("Search results for " + Search.getFirst_Name() + " " + Search.getLast_Name());
 		frmSearchResultsFor.setBounds(100, 100, 715, 370);
-		frmSearchResultsFor.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmSearchResultsFor.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frmSearchResultsFor.getContentPane().setLayout(null);
+		frmSearchResultsFor.setLocationRelativeTo(null);
+		
 		final JList<Object> list = new JList<Object>();
 		list.setModel(listModel);
 		list.addListSelectionListener(new ListSelectionListener() {
@@ -88,31 +94,39 @@ public class List {
 			{
 				Patient selection = Patients.get(index);
 				int ID = selection.getID();
+				int apptId = selection.getAppointmentId();
 				try{
 					Connection conn=DriverManager.getConnection("jdbc:mysql://99.98.84.144:3306/medprogram", "root", "medProgram");
 					Statement stmt = conn.createStatement();
-					stmt.executeUpdate("UPDATE appointments SET checkinstatus = 1 WHERE patientid = " + ID);
+					stmt.executeUpdate("UPDATE appointments SET checkinstatus = 1 WHERE patientid = " + ID + " AND apptid = " + apptId + ";");
 					System.out.println("Database updated");
 					ResultSet rs;
-					rs = stmt.executeQuery("SELECT ph.patientid,ph.firstname,ph.lastname,ap.appttime,ap.visitreason,st.statusdesc FROM medprogram.patientheader ph JOIN medprogram.appointments ap on ap.patientid = ph.patientid JOIN medprogram.status st on st.statusid = ap.checkinstatus "
-							+ "WHERE ph.firstname like '%" + Search.getFirst_Name() + "%' and ph.lastname like '%" + Search.getLast_Name() + "%'");
+					rs = stmt.executeQuery("SELECT ap.apptid, ph.patientid,ph.firstname,ph.lastname,ap.appttime,ap.visitreason,st.statusdesc FROM medprogram.patientheader ph JOIN medprogram.appointments ap on ap.patientid = ph.patientid JOIN medprogram.status st on st.statusid = ap.checkinstatus "
+							+ "WHERE ap.isdeleted = 0 and ph.firstname like '%" + Search.getFirst_Name() + "%' and ph.lastname like '%" + Search.getLast_Name() + "%'");
 					listModel.clear();
 					Patients.clear();
 					while(rs.next()){
+						apptId = rs.getInt("apptid");
 						ID = rs.getInt("patientid");
 						String first = rs.getString("firstname");
 						String last = rs.getString("lastname");
-						Date apt_time = rs.getDate("appttime");
+						Timestamp apt_time = rs.getTimestamp("appttime");
 						String visit_reason = rs.getString("visitreason");
 						String status = rs.getString("statusdesc");
-						if(status == "Not Checked In")
+						if(status.equals("Not Checked In"))
 						{
 							status = "";
 						}
-						String date_string = String.format("%15tc", apt_time);
-						String test = String.format("%1d %21s %1s %45s %20s %35s",ID,first,last,date_string,visit_reason,status);
+						//java.util.Date apptDateTime = new java.util.Date(apt_time.getTime());
+						
+						java.text.SimpleDateFormat sdf = 
+								new java.text.SimpleDateFormat("MM-dd-yyyy HH:mm");
+						
+						String appt = sdf.format(apt_time);
+						
+						String test = String.format("%1d %21s %1s %45s %20s %35s",ID,first,last,appt,visit_reason,status);
 						listModel.addElement(test);
-						Patients.add(new Patient(ID,first,last,apt_time,visit_reason,status));
+						Patients.add(new Patient(apptId,ID,first,last,apt_time,visit_reason,status));
 					}
 					list.setModel(listModel);
 					conn.close();
@@ -139,32 +153,40 @@ public class List {
 				{
 					Patient selection = Patients.get(index);
 					int ID = selection.getID();
+					int apptId = selection.getAppointmentId();
 					try{
 						Connection conn=DriverManager.getConnection("jdbc:mysql://99.98.84.144:3306/medprogram", "root", "medProgram");
 						Statement stmt = conn.createStatement();
-						stmt.executeUpdate("UPDATE appointments SET checkinstatus = 2 WHERE patientid = " + ID);
+						
+						stmt.executeUpdate("UPDATE appointments SET checkinstatus = 2 WHERE patientid = " + ID + " AND apptid = " + apptId + ";");
 						//Display updated list
 						System.out.println("Database updated");
 						ResultSet rs;
-						rs = stmt.executeQuery("SELECT ph.patientid,ph.firstname,ph.lastname,ap.appttime,ap.visitreason,st.statusdesc FROM medprogram.patientheader ph JOIN medprogram.appointments ap on ap.patientid = ph.patientid JOIN medprogram.status st on st.statusid = ap.checkinstatus "
-								+ "WHERE ph.firstname like '%" + Search.getFirst_Name() + "%' and ph.lastname like '%" + Search.getLast_Name() + "%'");
+						rs = stmt.executeQuery("SELECT ap.apptid, ph.patientid,ph.firstname,ph.lastname,ap.appttime,ap.visitreason,st.statusdesc FROM medprogram.patientheader ph JOIN medprogram.appointments ap on ap.patientid = ph.patientid JOIN medprogram.status st on st.statusid = ap.checkinstatus "
+								+ "WHERE ap.isdeleted = 0 and ph.firstname like '%" + Search.getFirst_Name() + "%' and ph.lastname like '%" + Search.getLast_Name() + "%'");
 						listModel.clear();
 						Patients.clear();
 						while(rs.next()){
+							apptId = rs.getInt("apptid");
 							ID = rs.getInt("patientid");
 							String first = rs.getString("firstname");
 							String last = rs.getString("lastname");
-							Date apt_time = rs.getDate("appttime");
+							Timestamp apt_time = rs.getTimestamp("appttime");
 							String visit_reason = rs.getString("visitreason");
 							String status = rs.getString("statusdesc");
-							if(status == "Not Checked In")
+							if(status.equals("Not Checked In"))
 							{
 								status = "";
 							}
-							String date_string = String.format("%15tc", apt_time);
-							String test = String.format("%1d %21s %1s %45s %20s %35s",ID,first,last,date_string,visit_reason,status);
+							//java.util.Date apptDateTime = new java.util.Date(apt_time.getTime());
+							java.text.SimpleDateFormat sdf = 
+									new java.text.SimpleDateFormat("MM-dd-yyyy HH:mm");
+							
+							String appt = sdf.format(apt_time);
+							
+							String test = String.format("%1d %21s %1s %45s %20s %35s",ID,first,last,appt,visit_reason,status);
 							listModel.addElement(test);
-							Patients.add(new Patient(ID,first,last,apt_time,visit_reason,status));
+							Patients.add(new Patient(apptId,ID,first,last,apt_time,visit_reason,status));
 						}
 						list.setModel(listModel);
 						conn.close();
@@ -181,13 +203,13 @@ public class List {
 				}
 			}
 		});
-		btnCheckOut.setBounds(275, 273, 154, 47);
+		btnCheckOut.setBounds(182, 274, 154, 47);
 		frmSearchResultsFor.getContentPane().add(btnCheckOut);
 		
 		JButton btnClose = new JButton("Close");
 		btnClose.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
+				frmSearchResultsFor.dispose();
 			}
 		});
 		btnClose.setBounds(535, 273, 154, 47);
@@ -213,5 +235,69 @@ public class List {
 		JLabel lblStatus = new JLabel("Status");
 		lblStatus.setBounds(615, 11, 94, 14);
 		frmSearchResultsFor.getContentPane().add(lblStatus);
+		
+		JButton btnDelete = new JButton("Delete Appointment");
+		btnDelete.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				if(index != -1)
+				{
+					Patient selection = Patients.get(index);
+					int ID = selection.getID();
+					int apptId = selection.getAppointmentId();
+					try{
+						Connection conn=DriverManager.getConnection("jdbc:mysql://99.98.84.144:3306/medprogram", "root", "medProgram");
+						Statement stmt = conn.createStatement();
+						int dialogBtn = JOptionPane.YES_NO_OPTION;
+						int dialogResult = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this entry?", "Warning", dialogBtn);
+						if (dialogResult == 1)
+							return;
+						stmt.executeUpdate("UPDATE appointments set isdeleted=1 where patientid = " + ID + " AND apptid = " + apptId + ";");
+						System.out.println("Database updated");
+						ResultSet rs;
+						rs = stmt.executeQuery("SELECT ap.apptid, ph.patientid,ph.firstname,ph.lastname,ap.appttime,ap.visitreason,st.statusdesc FROM medprogram.patientheader ph JOIN medprogram.appointments ap on ap.patientid = ph.patientid JOIN medprogram.status st on st.statusid = ap.checkinstatus "
+								+ "WHERE ap.isdeleted = 0 and ph.firstname like '%" + Search.getFirst_Name() + "%' and ph.lastname like '%" + Search.getLast_Name() + "%'");
+						listModel.clear();
+						Patients.clear();
+						while(rs.next()){
+							apptId = rs.getInt("apptid");
+							ID = rs.getInt("patientid");
+							String first = rs.getString("firstname");
+							String last = rs.getString("lastname");
+							Timestamp apt_time = rs.getTimestamp("appttime");
+							String visit_reason = rs.getString("visitreason");
+							String status = rs.getString("statusdesc");
+							if(status.equals("Not Checked In"))
+							{
+								status = "";
+							}
+							//java.util.Date apptDateTime = new java.util.Date(apt_time.getTime());
+							
+							java.text.SimpleDateFormat sdf = 
+								     new java.text.SimpleDateFormat("MM-dd-yyyy HH:mm");
+							
+							String appt = sdf.format(apt_time);
+							
+							String test = String.format("%1d %21s %1s %45s %20s %35s",ID,first,last,appt,visit_reason,status);
+							listModel.addElement(test);
+							Patients.add(new Patient(apptId,ID,first,last,apt_time,visit_reason,status));
+						}
+						list.setModel(listModel);
+						conn.close();
+						
+					}
+					catch (Exception e1)
+					{
+						System.err.println(e1.getMessage());
+					}
+				}
+				else
+				{
+					System.out.println("error");
+				}
+				}
+		});
+		btnDelete.setBounds(357, 273, 154, 47);
+		frmSearchResultsFor.getContentPane().add(btnDelete);
 	}
 }

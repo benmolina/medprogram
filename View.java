@@ -1,3 +1,5 @@
+package medProgram;
+
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -19,12 +21,14 @@ public class View extends JPanel {
 		table.setPreferredScrollableViewportSize(new Dimension(1300,800));
 		
 		table.setRowHeight(50);
-		table.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+		table.setFont(new Font("Times New Roman", Font.PLAIN, 13));
 		
 		
 		JScrollPane scrollPane = new JScrollPane(table);
 		
 		add(scrollPane);
+		
+		
 	}
 
 }

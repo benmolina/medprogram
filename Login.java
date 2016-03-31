@@ -1,3 +1,5 @@
+package medProgram;
+
 import java.awt.event.*; 
 import javax.swing.*; 
 import java.awt.*; 
@@ -25,6 +27,8 @@ class Login extends JFrame  implements  ActionListener {
 		this.setTitle("Login");   
 		this.setSize(350,220);   
 		this.setVisible(true); 
+		this.setLocationRelativeTo(getParent());
+		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	}
 	
 	void addComponents() { 
@@ -68,9 +72,9 @@ class Login extends JFrame  implements  ActionListener {
         	System.out.println("Database connected2!");
         	ResultSet rs=sql.executeQuery(queryMima); 
         	if(rs.next()){ 
-        		new MainInterface(uname);   
-        		f.hide(); 
+        		new MainInterface(uname);
         		con.close();     
+        		this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
         	} 
         	else{ 
         		JOptionPane.showMessageDialog(null,"Username or password is not correct, please try again.","Attention！",  JOptionPane.YES_NO_OPTION);        

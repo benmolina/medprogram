@@ -1,3 +1,5 @@
+package medProgram;
+
 import javax.swing.table.AbstractTableModel;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -13,12 +15,12 @@ import java.sql.*;
 public class AppointmentViewer extends AbstractTableModel {
 	
 	//Titles for the appointment viewer
-	private String[] columnName = {"Appointment ID", "Patient First Name", "Patient Last Name","Appointment Time",
+	private String[] columnName = {"Patient First Name", "Patient Last Name","Appointment Time",
 								  "Doctor", "Reason for visit", "Comments", "Check-In Status",
 								  "Creator User"};
 	
 	//Two dimension array to hold the info each patient
-	private static String[][] info = new String[20][9];
+	private static String[][] info = new String[20][8];
 	
     public int getColumnCount() {
 		return columnName.length;
@@ -47,40 +49,55 @@ public class AppointmentViewer extends AbstractTableModel {
     	
     	//Setup frame of window
     	JFrame frame = new JFrame(title);
-    	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    	frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     	
     	//Fill window with the table
     	View newContentPane = new View();
     	newContentPane.setOpaque(true);
     	frame.setContentPane(newContentPane);
     	
-    	frame.pack();
+    	frame.setSize(1100,400);
     	frame.setVisible(true);
+    	frame.setLocationRelativeTo(null);
     	
     }
 
-	public static void main(String[] args) {
-		info[0][4] = "My stomach hurts really really bad";
+	public static void main() {
 		try{
 			Connection myConn = DriverManager.getConnection("jdbc:mysql://99.98.84.144:3306/medprogram", "root", "medProgram");
 			
 			Statement myStmt = myConn.createStatement();
 			int n = 0;
-			ResultSet myRes = myStmt.executeQuery("select appointments.apptid, patientheader.firstname, patientheader.lastname, appointments.appttime, A.lastname, appointments.visitreason, "
+			ResultSet myRes = myStmt.executeQuery("select patientheader.firstname, patientheader.lastname, appointments.appttime, A.lastname, appointments.visitreason, "
 					+ "appointments.comments, status.statusdesc, B.username from appointments "
 					+ "inner join patientheader on patientheader.patientid = appointments.patientid inner join user A on A.userid = appointments.doctor "
-					+ "inner join status on status.statusid = appointments.checkinstatus inner join user B on B.userid = appointments.creatoruser;");
+					+ "inner join status on status.statusid = appointments.checkinstatus inner join user B on B.userid = appointments.creatoruser " 
+					+ "where appointments.isdeleted = 0;");
 			
 				while (myRes.next()){
-					info[n][0] = myRes.getString("apptid");
-					info[n][1] = myRes.getString("firstname");
-					info[n][2] = myRes.getString("lastname");
-					info[n][3] = myRes.getString("appttime");
-					info[n][4] = myRes.getString("A.lastname");
-					info[n][5] = myRes.getString("visitreason");
-					info[n][6] = myRes.getString("comments");
-					info[n][7] = myRes.getString("statusdesc");
-					info[n][8] = myRes.getString("B.username");
+					
+					Timestamp tempTime = myRes.getTimestamp("appttime");
+					
+					java.text.SimpleDateFormat sdf = 
+							new java.text.SimpleDateFormat("MM-dd-yyyy HH:mm");
+					
+					String simpleTime = sdf.format(tempTime);
+					
+					
+					
+					
+					info[n][0] = myRes.getString("firstname");
+					info[n][1] = myRes.getString("lastname");
+					info[n][2] = simpleTime;
+					info[n][3] = myRes.getString("A.lastname");
+					info[n][4] = myRes.getString("visitreason");
+					info[n][5] = myRes.getString("comments");
+					
+					if (myRes.getString("statusdesc").equals("Not Checked In"))
+						info[n][6] = "";
+					else
+						info[n][6] = myRes.getString("statusdesc");
+					info[n][7] = myRes.getString("B.username");
 					n++;
 				}
 			
