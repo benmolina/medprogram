@@ -120,7 +120,7 @@ public class Search {
 					Connection conn=DriverManager.getConnection("jdbc:mysql://99.98.84.144:3306/medprogram", "root", "medProgram");
 					Statement stmt = conn.createStatement();
 					ResultSet rs;
-					rs = stmt.executeQuery("SELECT ap.apptid, ph.patientid,ph.firstname,ph.lastname,ap.appttime,ap.visitreason,st.statusdesc FROM medprogram.patientheader ph JOIN medprogram.appointments ap on ap.patientid = ph.patientid JOIN medprogram.status st on st.statusid = ap.checkinstatus "
+					rs = stmt.executeQuery("SELECT ap.apptid, ph.patientid,ph.firstname,ph.lastname,ap.appttime,ap.visitreason,st.statusdesc, CONCAT(u.firstname, ' ', u.lastname) as doctor FROM medprogram.patientheader ph JOIN medprogram.appointments ap on ap.patientid = ph.patientid JOIN medprogram.status st on st.statusid = ap.checkinstatus JOIN medprogram.user u on ap.doctor = u.userid "
 							+ "WHERE ap.isdeleted = 0 and ph.firstname like '%" + First_Name.getText() + "%' and ph.lastname like '%" + Last_Name.getText() + "%'");
 					String test = null;
 					int count = 0;
@@ -133,21 +133,26 @@ public class Search {
 							Timestamp apt_time = rs.getTimestamp("appttime");
 							String visit_reason = rs.getString("visitreason");
 							String status = rs.getString("statusdesc");
-							if(status.equals("Not Checked In"))
-							{
-								status = "";
-							}
+							String doc = rs.getString("doctor");
+//							if(status.equals("Not Checked In"))
+//							{
+//								status = "";
+//							}
 							//java.util.Date apptDateTime = new java.util.Date(apt_time.getTime());
 							java.text.SimpleDateFormat sdf = 
 									new java.text.SimpleDateFormat("MM-dd-yyyy HH:mm");
 							
 							String appt = sdf.format(apt_time);
 							
-							//String date_string = String.format("%15tc", apt_time);
-							test = String.format("%1d %21s %1s %45s %20s %35s",ID,first,last,appt.toString(),visit_reason,status);
-							System.out.println(test);
+							if(status.equals("Not Checked In"))
+							{
+								status = "";
+								test = String.format("%1d %17s %1s %45s %19s %52s %25s",ID,first,last,appt.toString(),visit_reason,status, doc);
+							}
+							else
+								test = String.format("%1d %17s %1s %45s %19s %44s %25s",ID,first,last,appt.toString(),visit_reason,status, doc);
 							listModel.addElement(test);
-							patients.add(new Patient(apptId, ID,first,last,apt_time,visit_reason,status));
+							patients.add(new Patient(apptId, ID,first,last,apt_time,visit_reason,status, doc));
 						}while(rs.next());
 						List.NewScreen(listModel, patients);
 						frmCheckin.dispose();

@@ -5,36 +5,26 @@ import java.awt.*;
 import java.awt.event.*; 
 import java.util.*; 
 import javax.swing.*; 
-import javax.swing.border.*; 
-
-import javax.swing.JDesktopPane;
-import javax.swing.JFrame;
-import javax.swing.JInternalFrame;
+import javax.swing.border.*;
 
 public class MainInterface extends JFrame implements ActionListener { 
 	
 	JDesktopPane gui = new JDesktopPane();
 	
 	JMenuBar mb = new JMenuBar();  
-	JMenu  ManaSystem,appoViewer,checkIn,medRecord,headspace,usersetting,GetHelp; 
-	JMenuItem  outsystem,patientinfo,patientinfo1,addHospital,dropHospital,space_2,changepwd,adduser,aboutauthor,aboutsystem,space_1,usehelp,background,color1,manspace_1, 
- color2,color3,usetspace, openApptViewer, openCheckIn;  
+	JMenu  ManaSystem,appoViewer,checkIn,medRecord,usersetting,GetHelp; 
+	JMenuItem  outsystem,patientinfo,patientinfo1,addHospital,dropHospital,changepwd,addUser,aboutauthor,aboutsystem,usehelp,background,color1,manspace_1, 
+ color2,color3, openApptViewer, openCheckIn,mntmOpenMedicalRecord,mntmRemoveUser;  
 	JMenu backcolor;  
 	JPanel jp=new JPanel(); 
 	Container cp=getContentPane();
 	String username; 
 	boolean isLoggedIn = false;
+	private JMenuItem mntmTimeManagement;
+//	private JMenuItem mntmOpenMedicalRecord;
+//	private JMenuItem mntmRemoveUser;
 	
 	MainInterface(String username) { 
-//		if (isLoggedIn = false)
-//		{
-//			new Login();
-//			this.setEnabled(false);
-//		}
-//		else
-//		{
-//			this.setEnabled(true);
-//		}
 		
 		this.username=username; 
 		cp.add(mb,"North"); 
@@ -49,9 +39,7 @@ public class MainInterface extends JFrame implements ActionListener {
 		//Appointment viewer
 		appoViewer=new JMenu("Appointment Viewer");   
 		//Medical record
-		medRecord=new JMenu("Medical  Record");  
-		//Space leaved for later function 
-		headspace=new JMenu("Headspace");  
+		medRecord=new JMenu("Medical  Record");
 		//User setting
 		usersetting=new JMenu("User Setting");       
 		//Help
@@ -67,24 +55,22 @@ public class MainInterface extends JFrame implements ActionListener {
   		color3=new JMenuItem("Black");
   		openApptViewer=new JMenuItem("Open Appointment Viewer");
   		openCheckIn=new JMenuItem("Open Check In");
-		background.add(backcolor);     
+		//background.add(backcolor);     
 		backcolor.add(color1);         
 		backcolor.add(color2);         
 		backcolor.add(color3);   
 		
 		//Log out in 'System Setting'
-		outsystem=new JMenuItem("Log Out");   
-		space_1=new JMenuItem("space"); 
-		space_2=new JMenuItem("space");
+		outsystem=new JMenuItem("Log Out");
 		
 		//Change password in 'User Setting'
-		changepwd=new JMenuItem("ChangePassword");  
+		changepwd=new JMenuItem("Change Password");  
 		
 		//Add user
-		adduser=new JMenuItem("AddUser");   
+		//adduser=new JMenuItem("AddUser");   
 		
 		//Space leaved for later function in 'User Setting'
-		usetspace=new JMenuItem("space");
+		addUser=new JMenuItem("Add User");
 		//Info about author and system
 		
 		aboutauthor=new JMenuItem("About Author");      
@@ -98,17 +84,23 @@ public class MainInterface extends JFrame implements ActionListener {
 		mb.add(checkIn);   
 		mb.add(appoViewer);   
 		mb.add(medRecord); 
-		mb.add(headspace); 
+		
+		mntmOpenMedicalRecord = new JMenuItem("Open Medical Record");
+		medRecord.add(mntmOpenMedicalRecord);
 		mb.add(usersetting);  
 		mb.add(GetHelp);
 		ManaSystem.add(backcolor);   
-		ManaSystem.add(outsystem);     
-		headspace.add(space_2); 
-		headspace.add(space_1);
+		ManaSystem.add(outsystem);
 		checkIn.add(openCheckIn);
 		appoViewer.add(openApptViewer);
+		
+		mntmTimeManagement = new JMenuItem("Time Management");
+		appoViewer.add(mntmTimeManagement);
 		usersetting.add(changepwd);        
-		usersetting.add(usetspace);    
+		usersetting.add(addUser);    
+		
+		mntmRemoveUser = new JMenuItem("Remove User");
+		usersetting.add(mntmRemoveUser);
 		GetHelp.add(aboutauthor);    
 		GetHelp.add(aboutsystem);       
 		GetHelp.add(usehelp); 
@@ -116,16 +108,18 @@ public class MainInterface extends JFrame implements ActionListener {
 		color2.addActionListener(this);     
 		color3.addActionListener(this);  
 		
-		//Add action listerner
+		//Add action listener
 		outsystem.addActionListener(this);     
 		changepwd.addActionListener(this);
-		adduser.addActionListener(this);
-		usetspace.addActionListener(this);       
+		addUser.addActionListener(this);
+		mntmRemoveUser.addActionListener(this);
+		//addUser.addActionListener(this);       
 		aboutauthor.addActionListener(this);      
 		aboutsystem.addActionListener(this);   
 		usehelp.addActionListener(this);
 		openApptViewer.addActionListener(this);
-		openCheckIn.addActionListener(this);		
+		openCheckIn.addActionListener(this);
+		mntmTimeManagement.addActionListener(this);
 		
 		jp.setLayout(new BorderLayout());       
 		JLabel label1 = new JLabel();   
@@ -154,15 +148,21 @@ public class MainInterface extends JFrame implements ActionListener {
 			jp.setBackground(Color.white);   
 		} 
 		if (e.getSource()==outsystem){ 
-			new Login();
-			this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
-			
+			int dialogBtn = JOptionPane.YES_NO_OPTION;
+			int dialogResult = JOptionPane.showConfirmDialog(null, "Are you sure you want to log out?", "Warning", dialogBtn);
+			if (dialogResult == 0)
+				{
+					new Login();
+					this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+				}
+						
 		} 
+
 		if (e.getSource()==changepwd){ 
-			//null;
+			JOptionPane.showMessageDialog(this,"This feature has not been implemented yet.");
 		} 
-		if (e.getSource()==adduser){ 
-			//null;   
+		if (e.getSource()==addUser){ 
+			new AddUser(username);   
 		} 
 		if (e.getSource()==aboutauthor){ 
 			JOptionPane.showMessageDialog(this,"This feature has not been implemented yet.");   
@@ -191,6 +191,14 @@ public class MainInterface extends JFrame implements ActionListener {
 		if (e.getSource()==medRecord){ 
 			JOptionPane.showMessageDialog(this,"This feature has not been implemented yet.");
 		} 
+		
+		if (e.getSource() == mntmRemoveUser) {
+			new RemoveUser();
+		}
+		
+		if (e.getSource() == mntmTimeManagement) {
+			new TimeManagement();
+		}
 	}
 
 	public static void main(String[]args) { 

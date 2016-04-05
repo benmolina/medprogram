@@ -5,12 +5,12 @@ import java.util.Scanner;
 //import java.util.List;
 public class Patient 
 {
-		String first,last,visit,status;
+		String first,last,visit,status, doc;
 		int ID, apptId;
 		Date apttime;
 		String email;
 		
-		Patient(int apptIdNum, int ID_number,String firstname, String lastname, Date appointmenttime, String visit_reason, String status_desc)
+		Patient(int apptIdNum, int ID_number,String firstname, String lastname, Date appointmenttime, String visit_reason, String status_desc, String doctor)
 		{
 			apptId = apptIdNum;
 			ID = ID_number;
@@ -19,6 +19,7 @@ public class Patient
 			apttime = appointmenttime;
 			visit = visit_reason;
 			status = status_desc;
+			doc = doctor;
 		}
 		
 		public Patient() {
@@ -43,6 +44,12 @@ public class Patient
 		{
 			return ID;
 		}
+		
+		public String getDoctor()
+		{
+			return doc;
+		}
+		
 		public void createDatabase()
 		{	
 		}

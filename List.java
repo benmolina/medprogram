@@ -32,6 +32,7 @@ public class List {
 
 	public static String Model;
 	public static ArrayList<Patient> Patients;
+	private String [] docName;
 	
 	public int index = -1;
 	/**
@@ -65,7 +66,7 @@ public class List {
 	private void initialize() {
 		frmSearchResultsFor = new JFrame();
 		frmSearchResultsFor.setTitle("Search results for " + Search.getFirst_Name() + " " + Search.getLast_Name());
-		frmSearchResultsFor.setBounds(100, 100, 715, 370);
+		frmSearchResultsFor.setBounds(100, 100, 875, 370);
 		frmSearchResultsFor.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frmSearchResultsFor.getContentPane().setLayout(null);
 		frmSearchResultsFor.setLocationRelativeTo(null);
@@ -84,7 +85,7 @@ public class List {
 			}
 		});
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		list.setBounds(10, 27, 679, 235);
+		list.setBounds(6, 27, 863, 245);
 		frmSearchResultsFor.getContentPane().add(list);
 		
 		JButton btnCheckIn = new JButton("Check-In");
@@ -95,13 +96,17 @@ public class List {
 				Patient selection = Patients.get(index);
 				int ID = selection.getID();
 				int apptId = selection.getAppointmentId();
+				String doctor = selection.getDoctor();
+				docName = doctor.split(" ");
 				try{
 					Connection conn=DriverManager.getConnection("jdbc:mysql://99.98.84.144:3306/medprogram", "root", "medProgram");
 					Statement stmt = conn.createStatement();
 					stmt.executeUpdate("UPDATE appointments SET checkinstatus = 1 WHERE patientid = " + ID + " AND apptid = " + apptId + ";");
+					stmt.executeUpdate("UPDATE user SET userstatus = 5 where firstname = '" + docName[0] + "' and lastname = '" + docName[1] + "';");
+					
 					System.out.println("Database updated");
 					ResultSet rs;
-					rs = stmt.executeQuery("SELECT ap.apptid, ph.patientid,ph.firstname,ph.lastname,ap.appttime,ap.visitreason,st.statusdesc FROM medprogram.patientheader ph JOIN medprogram.appointments ap on ap.patientid = ph.patientid JOIN medprogram.status st on st.statusid = ap.checkinstatus "
+					rs = stmt.executeQuery("SELECT ap.apptid, ph.patientid,ph.firstname,ph.lastname,ap.appttime,ap.visitreason,st.statusdesc,CONCAT(u.firstname, ' ', u.lastname) as doctor FROM medprogram.patientheader ph JOIN medprogram.appointments ap on ap.patientid = ph.patientid JOIN medprogram.status st on st.statusid = ap.checkinstatus JOIN medprogram.user u on ap.doctor = u.userid "
 							+ "WHERE ap.isdeleted = 0 and ph.firstname like '%" + Search.getFirst_Name() + "%' and ph.lastname like '%" + Search.getLast_Name() + "%'");
 					listModel.clear();
 					Patients.clear();
@@ -113,10 +118,11 @@ public class List {
 						Timestamp apt_time = rs.getTimestamp("appttime");
 						String visit_reason = rs.getString("visitreason");
 						String status = rs.getString("statusdesc");
-						if(status.equals("Not Checked In"))
-						{
-							status = "";
-						}
+						String doc = rs.getString("doctor");
+//						if(status.equals("Not Checked In"))
+//						{
+//							status = "";
+//						}
 						//java.util.Date apptDateTime = new java.util.Date(apt_time.getTime());
 						
 						java.text.SimpleDateFormat sdf = 
@@ -124,11 +130,21 @@ public class List {
 						
 						String appt = sdf.format(apt_time);
 						
-						String test = String.format("%1d %21s %1s %45s %20s %35s",ID,first,last,appt,visit_reason,status);
+						String test;
+						if(status.equals("Not Checked In"))
+						{
+							status = "";
+							test = String.format("%1d %17s %1s %45s %19s %52s %25s",ID,first,last,appt.toString(),visit_reason,status, doc);
+						}
+						else
+							test = String.format("%1d %17s %1s %45s %19s %44s %25s",ID,first,last,appt.toString(),visit_reason,status, doc);
 						listModel.addElement(test);
-						Patients.add(new Patient(apptId,ID,first,last,apt_time,visit_reason,status));
+						Patients.add(new Patient(apptId, ID,first,last,apt_time,visit_reason,status, doc));
+
+						
 					}
 					list.setModel(listModel);
+					stmt.closeOnCompletion();
 					conn.close();
 					
 				}
@@ -143,7 +159,7 @@ public class List {
 			}
 			}
 		});
-		btnCheckIn.setBounds(10, 273, 154, 47);
+		btnCheckIn.setBounds(10, 290, 154, 47);
 		frmSearchResultsFor.getContentPane().add(btnCheckIn);
 		
 		JButton btnCheckOut = new JButton("Check-Out");
@@ -154,15 +170,18 @@ public class List {
 					Patient selection = Patients.get(index);
 					int ID = selection.getID();
 					int apptId = selection.getAppointmentId();
+					String doctor = selection.getDoctor();
+					docName = doctor.split(" ");
 					try{
 						Connection conn=DriverManager.getConnection("jdbc:mysql://99.98.84.144:3306/medprogram", "root", "medProgram");
 						Statement stmt = conn.createStatement();
 						
 						stmt.executeUpdate("UPDATE appointments SET checkinstatus = 2 WHERE patientid = " + ID + " AND apptid = " + apptId + ";");
+						stmt.executeUpdate("UPDATE user SET userstatus = 4 where firstname = '" + docName[0] + "' and lastname = '" + docName[1] + "';");
 						//Display updated list
 						System.out.println("Database updated");
 						ResultSet rs;
-						rs = stmt.executeQuery("SELECT ap.apptid, ph.patientid,ph.firstname,ph.lastname,ap.appttime,ap.visitreason,st.statusdesc FROM medprogram.patientheader ph JOIN medprogram.appointments ap on ap.patientid = ph.patientid JOIN medprogram.status st on st.statusid = ap.checkinstatus "
+						rs = stmt.executeQuery("SELECT ap.apptid, ph.patientid,ph.firstname,ph.lastname,ap.appttime,ap.visitreason,st.statusdesc,CONCAT(u.firstname, ' ', u.lastname) as doctor FROM medprogram.patientheader ph JOIN medprogram.appointments ap on ap.patientid = ph.patientid JOIN medprogram.status st on st.statusid = ap.checkinstatus JOIN medprogram.user u on ap.doctor = u.userid "
 								+ "WHERE ap.isdeleted = 0 and ph.firstname like '%" + Search.getFirst_Name() + "%' and ph.lastname like '%" + Search.getLast_Name() + "%'");
 						listModel.clear();
 						Patients.clear();
@@ -174,21 +193,31 @@ public class List {
 							Timestamp apt_time = rs.getTimestamp("appttime");
 							String visit_reason = rs.getString("visitreason");
 							String status = rs.getString("statusdesc");
-							if(status.equals("Not Checked In"))
-							{
-								status = "";
-							}
+							String doc = rs.getString("doctor");
+//							if(status.equals("Not Checked In"))
+//							{
+//								status = "";
+//							}
 							//java.util.Date apptDateTime = new java.util.Date(apt_time.getTime());
 							java.text.SimpleDateFormat sdf = 
 									new java.text.SimpleDateFormat("MM-dd-yyyy HH:mm");
 							
 							String appt = sdf.format(apt_time);
 							
-							String test = String.format("%1d %21s %1s %45s %20s %35s",ID,first,last,appt,visit_reason,status);
+							String test;
+							if(status.equals("Not Checked In"))
+							{
+								status = "";
+								test = String.format("%1d %17s %1s %45s %19s %52s %25s",ID,first,last,appt.toString(),visit_reason,status, doc);
+							}
+							else
+								test = String.format("%1d %17s %1s %45s %19s %44s %25s",ID,first,last,appt.toString(),visit_reason,status, doc);
 							listModel.addElement(test);
-							Patients.add(new Patient(apptId,ID,first,last,apt_time,visit_reason,status));
+							Patients.add(new Patient(apptId, ID,first,last,apt_time,visit_reason,status, doc));
+												
 						}
 						list.setModel(listModel);
+						stmt.closeOnCompletion();
 						conn.close();
 						
 					}
@@ -203,7 +232,7 @@ public class List {
 				}
 			}
 		});
-		btnCheckOut.setBounds(182, 274, 154, 47);
+		btnCheckOut.setBounds(245, 290, 154, 47);
 		frmSearchResultsFor.getContentPane().add(btnCheckOut);
 		
 		JButton btnClose = new JButton("Close");
@@ -212,7 +241,7 @@ public class List {
 				frmSearchResultsFor.dispose();
 			}
 		});
-		btnClose.setBounds(535, 273, 154, 47);
+		btnClose.setBounds(715, 290, 154, 47);
 		frmSearchResultsFor.getContentPane().add(btnClose);
 		
 		JLabel lblIdNumber = new JLabel("ID");
@@ -229,11 +258,11 @@ public class List {
 		frmSearchResultsFor.getContentPane().add(lblAppointmentTime);
 		
 		JLabel lblVisitReason = new JLabel("Visit Reason");
-		lblVisitReason.setBounds(463, 11, 101, 14);
+		lblVisitReason.setBounds(431, 11, 86, 14);
 		frmSearchResultsFor.getContentPane().add(lblVisitReason);
 		
 		JLabel lblStatus = new JLabel("Status");
-		lblStatus.setBounds(615, 11, 94, 14);
+		lblStatus.setBounds(590, 11, 44, 14);
 		frmSearchResultsFor.getContentPane().add(lblStatus);
 		
 		JButton btnDelete = new JButton("Delete Appointment");
@@ -255,7 +284,7 @@ public class List {
 						stmt.executeUpdate("UPDATE appointments set isdeleted=1 where patientid = " + ID + " AND apptid = " + apptId + ";");
 						System.out.println("Database updated");
 						ResultSet rs;
-						rs = stmt.executeQuery("SELECT ap.apptid, ph.patientid,ph.firstname,ph.lastname,ap.appttime,ap.visitreason,st.statusdesc FROM medprogram.patientheader ph JOIN medprogram.appointments ap on ap.patientid = ph.patientid JOIN medprogram.status st on st.statusid = ap.checkinstatus "
+						rs = stmt.executeQuery("SELECT ap.apptid, ph.patientid,ph.firstname,ph.lastname,ap.appttime,ap.visitreason,st.statusdesc,CONCAT(u.firstname, ' ', u.lastname) as doctor FROM medprogram.patientheader ph JOIN medprogram.appointments ap on ap.patientid = ph.patientid JOIN medprogram.status st on st.statusid = ap.checkinstatus JOIN medprogram.user u on ap.doctor = u.userid "
 								+ "WHERE ap.isdeleted = 0 and ph.firstname like '%" + Search.getFirst_Name() + "%' and ph.lastname like '%" + Search.getLast_Name() + "%'");
 						listModel.clear();
 						Patients.clear();
@@ -267,22 +296,32 @@ public class List {
 							Timestamp apt_time = rs.getTimestamp("appttime");
 							String visit_reason = rs.getString("visitreason");
 							String status = rs.getString("statusdesc");
-							if(status.equals("Not Checked In"))
-							{
-								status = "";
-							}
+							String doc = rs.getString("doctor");
+//							if(status.equals("Not Checked In"))
+//							{
+//								status = "";
+//							}
 							//java.util.Date apptDateTime = new java.util.Date(apt_time.getTime());
 							
 							java.text.SimpleDateFormat sdf = 
 								     new java.text.SimpleDateFormat("MM-dd-yyyy HH:mm");
 							
 							String appt = sdf.format(apt_time);
-							
-							String test = String.format("%1d %21s %1s %45s %20s %35s",ID,first,last,appt,visit_reason,status);
+
+							String test;
+							if(status.equals("Not Checked In"))
+							{
+								status = "";
+								test = String.format("%1d %17s %1s %45s %19s %52s %25s",ID,first,last,appt.toString(),visit_reason,status, doc);
+							}
+							else
+								test = String.format("%1d %17s %1s %45s %19s %44s %25s",ID,first,last,appt.toString(),visit_reason,status, doc);
 							listModel.addElement(test);
-							Patients.add(new Patient(apptId,ID,first,last,apt_time,visit_reason,status));
+							Patients.add(new Patient(apptId, ID,first,last,apt_time,visit_reason,status, doc));
+							
 						}
 						list.setModel(listModel);
+						stmt.closeOnCompletion();
 						conn.close();
 						
 					}
@@ -297,7 +336,11 @@ public class List {
 				}
 				}
 		});
-		btnDelete.setBounds(357, 273, 154, 47);
+		btnDelete.setBounds(480, 290, 154, 47);
 		frmSearchResultsFor.getContentPane().add(btnDelete);
+		
+		JLabel lblDoctor = new JLabel("Doctor");
+		lblDoctor.setBounds(715, 11, 50, 14);
+		frmSearchResultsFor.getContentPane().add(lblDoctor);
 	}
 }

@@ -160,12 +160,6 @@ public class CreateAppt extends JFrame {
 		JDateChooser jdcDate = new JDateChooser();
 		jdcDate.setBounds(125, 7, 145, 28);
 		pnlApptDateTime.add(jdcDate);
-//		jdcDate.addPropertyChangeListener(new PropertyChangeListener() {
-//			@Override
-//			public void propertyChange(PropertyChangeEvent evt) {
-//				apptDate = jdcDate.getDate().toString();
-//			}
-//		});
 		
 		JLabel lblApptTime = new JLabel("Time");
 		lblApptTime.setBounds(89, 51, 35, 14);
@@ -238,14 +232,14 @@ public class CreateAppt extends JFrame {
 			Connection conn=DriverManager.getConnection("jdbc:mysql://99.98.84.144:3306/medprogram", "root", "medProgram");
 			Statement stmt = conn.createStatement();
 			ResultSet loadDoctors, loadUsers;
-			loadDoctors = stmt.executeQuery("Select username from medprogram.user where userrole = 2;");
+			loadDoctors = stmt.executeQuery("Select username from medprogram.user where userrole = 2 and isactive = 1;");
 			while (loadDoctors.next()) {
 				String tmp = loadDoctors.getString("username");
 				cbxDoctor.addItem(tmp);
 			}
 			stmt.closeOnCompletion();
 			
-			loadUsers = stmt.executeQuery("Select username from medprogram.user;");
+			loadUsers = stmt.executeQuery("Select username from medprogram.user where isactive = 1;");
 			while (loadUsers.next()) {
 				String tmp = loadUsers.getString("username");
 				cbxUserCreator.addItem(tmp);

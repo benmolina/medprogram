@@ -67,8 +67,8 @@ class Login extends JFrame  implements  ActionListener {
         	System.out.println("Database connected1!");   
         	Statement sql=con.createStatement();    
         	String uname=name.getText().trim();    
-        	String Mima=pwd.getText().trim();    
-        	String queryMima="select * from user where username='"+uname+"' and password='"+Mima+"'"; 	
+        	String Mima=new String(pwd.getPassword()).trim();//pwd.getText().trim();    
+        	String queryMima="select * from user where username='"+uname+"' and password='"+Mima+"' and isactive = 1;"; 	
         	System.out.println("Database connected2!");
         	ResultSet rs=sql.executeQuery(queryMima); 
         	if(rs.next()){ 
@@ -77,7 +77,7 @@ class Login extends JFrame  implements  ActionListener {
         		this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
         	} 
         	else{ 
-        		JOptionPane.showMessageDialog(null,"Username or password is not correct, please try again.","Attention！",  JOptionPane.YES_NO_OPTION);        
+        		JOptionPane.showMessageDialog(null,"Username or password is not correct, or the user account has been deactivated. Please try again.","Attention！",  JOptionPane.YES_NO_OPTION);        
         	} 
         	name.setText("");  
         	pwd.setText("");    
