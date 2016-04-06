@@ -53,7 +53,7 @@ public class RemoveUser extends JFrame {
 	public RemoveUser() {
 		setTitle("Remove User");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 220, 330);
+		setBounds(100, 100, 288, 347);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -70,7 +70,7 @@ public class RemoveUser extends JFrame {
 			}
 		});
 		lstUsers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		lstUsers.setBounds(6, 45, 208, 201);
+		lstUsers.setBounds(6, 45, 256, 201);
 		contentPane.add(lstUsers);
 		
 		try {
@@ -149,7 +149,7 @@ public class RemoveUser extends JFrame {
 					}
 			}
 		});
-		btnRemove.setBounds(6, 273, 78, 29);
+		btnRemove.setBounds(6, 273, 102, 29);
 		contentPane.add(btnRemove);
 		
 		JButton btnCancel = new JButton("Cancel");
@@ -158,12 +158,12 @@ public class RemoveUser extends JFrame {
 				dispose();
 			}
 		});
-		btnCancel.setBounds(136, 273, 78, 29);
+		btnCancel.setBounds(160, 273, 102, 29);
 		contentPane.add(btnCancel);
 		
 		JLabel lblSelect = new JLabel("Select users to be removed");
 		lblSelect.setHorizontalAlignment(SwingConstants.CENTER);
-		lblSelect.setBounds(6, 17, 208, 16);
+		lblSelect.setBounds(36, 18, 208, 16);
 		contentPane.add(lblSelect);
 		
 		this.setLocationRelativeTo(this);

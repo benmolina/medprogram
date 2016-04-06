@@ -77,7 +77,7 @@ class Login extends JFrame  implements  ActionListener {
         		this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
         	} 
         	else{ 
-        		JOptionPane.showMessageDialog(null,"Username or password is not correct, or the user account has been deactivated. Please try again.","Attention！",  JOptionPane.YES_NO_OPTION);        
+        		JOptionPane.showMessageDialog(null,"Username or password is not correct, or the user account has been deactivated. Please try again.","Attention!",  JOptionPane.YES_NO_OPTION);        
         	} 
         	name.setText("");  
         	pwd.setText("");    
@@ -106,4 +106,3 @@ class Login extends JFrame  implements  ActionListener {
 	} 
 	
 }
- 

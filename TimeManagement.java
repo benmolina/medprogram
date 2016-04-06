@@ -50,7 +50,7 @@ public class TimeManagement extends JFrame {
 	public TimeManagement() {
 		setTitle("Time Management");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 245, 332);
+		setBounds(100, 100, 260, 353);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);

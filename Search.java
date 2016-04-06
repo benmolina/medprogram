@@ -66,7 +66,7 @@ public class Search {
 	private void initialize() {
 		frmCheckin = new JFrame();
 		frmCheckin.setTitle("Check-In");
-		frmCheckin.setBounds(100, 100, 320, 235);
+		frmCheckin.setBounds(100, 100, 320, 253);
 		frmCheckin.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frmCheckin.getContentPane().setLayout(null);
 		frmCheckin.setLocationRelativeTo(null);
@@ -169,7 +169,7 @@ public class Search {
 				}
 			}
 		});
-		btnSearch.setBounds(10, 115, 106, 38);
+		btnSearch.setBounds(5, 115, 137, 38);
 		frmCheckin.getContentPane().add(btnSearch);
 		
 		JButton btnClose = new JButton("Close");
@@ -178,7 +178,7 @@ public class Search {
 				frmCheckin.dispose();
 			}
 		});
-		btnClose.setBounds(145, 165, 106, 38);
+		btnClose.setBounds(162, 163, 132, 38);
 		frmCheckin.getContentPane().add(btnClose);
 		
 		JButton btnAddPatient = new JButton("Add Patient");
@@ -188,7 +188,7 @@ public class Search {
 				System.out.println("test");
 			}
 		});
-		btnAddPatient.setBounds(144, 115, 106, 38);
+		btnAddPatient.setBounds(162, 114, 132, 38);
 		frmCheckin.getContentPane().add(btnAddPatient);	
 		
 		JButton btnCreate = new JButton("Create Appointment");
@@ -202,7 +202,7 @@ public class Search {
 			}
 		});
 		btnCreate.setFont(new Font("Lucida Grande", Font.PLAIN, 10));
-		btnCreate.setBounds(5, 165, 116, 38);
+		btnCreate.setBounds(5, 165, 137, 38);
 		frmCheckin.getContentPane().add(btnCreate);
 	}
 }

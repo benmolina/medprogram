@@ -1,3 +1,4 @@
+package medProgram;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -81,7 +82,7 @@ public class SuppliesViewer extends AbstractTableModel{
     	
     	//Setup frame of window
     	JFrame frame = new JFrame(title);
-    	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    	frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     	
     	//Fill window with the table
     	ViewSupply newContentPane = new ViewSupply();
@@ -93,7 +94,7 @@ public class SuppliesViewer extends AbstractTableModel{
     	
     }
 
-	public static void main(String[] args) {
+	public static void main() {
 		
 		try{
 			
@@ -163,5 +164,3 @@ public class SuppliesViewer extends AbstractTableModel{
 	}
 
 }
-
-

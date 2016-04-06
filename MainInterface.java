@@ -12,9 +12,9 @@ public class MainInterface extends JFrame implements ActionListener {
 	JDesktopPane gui = new JDesktopPane();
 	
 	JMenuBar mb = new JMenuBar();  
-	JMenu  ManaSystem,appoViewer,checkIn,medRecord,usersetting,GetHelp; 
+	JMenu  ManaSystem,appoViewer,checkIn,medRecord,usersetting,GetHelp,Supplies; 
 	JMenuItem  outsystem,patientinfo,patientinfo1,addHospital,dropHospital,changepwd,addUser,aboutauthor,aboutsystem,usehelp,background,color1,manspace_1, 
- color2,color3, openApptViewer, openCheckIn,mntmOpenMedicalRecord,mntmRemoveUser;  
+ color2,color3, openApptViewer, openCheckIn,mntmOpenMedicalRecord,mntmRemoveUser,openSupplies;  
 	JMenu backcolor;  
 	JPanel jp=new JPanel(); 
 	Container cp=getContentPane();
@@ -39,7 +39,9 @@ public class MainInterface extends JFrame implements ActionListener {
 		//Appointment viewer
 		appoViewer=new JMenu("Appointment Viewer");   
 		//Medical record
-		medRecord=new JMenu("Medical  Record");
+		medRecord=new JMenu("Medical Record");
+		//Supplies
+		Supplies=new JMenu("Supplies");
 		//User setting
 		usersetting=new JMenu("User Setting");       
 		//Help
@@ -55,6 +57,7 @@ public class MainInterface extends JFrame implements ActionListener {
   		color3=new JMenuItem("Black");
   		openApptViewer=new JMenuItem("Open Appointment Viewer");
   		openCheckIn=new JMenuItem("Open Check In");
+  		openSupplies=new JMenuItem("Open Supplies Viewer");
 		//background.add(backcolor);     
 		backcolor.add(color1);         
 		backcolor.add(color2);         
@@ -83,7 +86,8 @@ public class MainInterface extends JFrame implements ActionListener {
 		mb.add(ManaSystem);  
 		mb.add(checkIn);   
 		mb.add(appoViewer);   
-		mb.add(medRecord); 
+		mb.add(medRecord);
+		mb.add(Supplies);
 		
 		mntmOpenMedicalRecord = new JMenuItem("Open Medical Record");
 		medRecord.add(mntmOpenMedicalRecord);
@@ -93,6 +97,7 @@ public class MainInterface extends JFrame implements ActionListener {
 		ManaSystem.add(outsystem);
 		checkIn.add(openCheckIn);
 		appoViewer.add(openApptViewer);
+		Supplies.add(openSupplies);
 		
 		mntmTimeManagement = new JMenuItem("Time Management");
 		appoViewer.add(mntmTimeManagement);
@@ -113,6 +118,8 @@ public class MainInterface extends JFrame implements ActionListener {
 		changepwd.addActionListener(this);
 		addUser.addActionListener(this);
 		mntmRemoveUser.addActionListener(this);
+		mntmOpenMedicalRecord.addActionListener(this);
+		openSupplies.addActionListener(this);
 		//addUser.addActionListener(this);       
 		aboutauthor.addActionListener(this);      
 		aboutsystem.addActionListener(this);   
@@ -120,6 +127,7 @@ public class MainInterface extends JFrame implements ActionListener {
 		openApptViewer.addActionListener(this);
 		openCheckIn.addActionListener(this);
 		mntmTimeManagement.addActionListener(this);
+		
 		
 		jp.setLayout(new BorderLayout());       
 		JLabel label1 = new JLabel();   
@@ -188,10 +196,15 @@ public class MainInterface extends JFrame implements ActionListener {
 		} 
    
 		//MEDICAL RECORD
-		if (e.getSource()==medRecord){ 
-			JOptionPane.showMessageDialog(this,"This feature has not been implemented yet.");
+		if (e.getSource()==mntmOpenMedicalRecord){
+			MedRecords Records = new MedRecords();
+			Records.main();
 		} 
-		
+		//SUPPLIES
+		if (e.getSource()==openSupplies){
+			SuppliesViewer supplies = new SuppliesViewer();
+			supplies.main();
+		}
 		if (e.getSource() == mntmRemoveUser) {
 			new RemoveUser();
 		}

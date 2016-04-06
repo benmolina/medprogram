@@ -66,7 +66,7 @@ public class List {
 	private void initialize() {
 		frmSearchResultsFor = new JFrame();
 		frmSearchResultsFor.setTitle("Search results for " + Search.getFirst_Name() + " " + Search.getLast_Name());
-		frmSearchResultsFor.setBounds(100, 100, 875, 370);
+		frmSearchResultsFor.setBounds(100, 100, 892, 387);
 		frmSearchResultsFor.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frmSearchResultsFor.getContentPane().setLayout(null);
 		frmSearchResultsFor.setLocationRelativeTo(null);

@@ -5,9 +5,9 @@ import java.util.Scanner;
 //import java.util.List;
 public class Patient 
 {
-		String first,last,visit,status, doc;
-		int ID, apptId;
-		Date apttime;
+		String first,last,visit,status,doc,street,state,phone,notes,insurance,insuranceinfo,allergy;
+		int ID, apptId, aptnumber,zipcode;
+		Date apttime, birthdate;
 		String email;
 		
 		Patient(int apptIdNum, int ID_number,String firstname, String lastname, Date appointmenttime, String visit_reason, String status_desc, String doctor)
@@ -22,6 +22,31 @@ public class Patient
 			doc = doctor;
 		}
 		
+		Patient(int ID_number, String firstname, String lastname, Date birth, String street, int aptnumber, String state, int zipcode, String phone, String notes, String insurance, String insuranceinfo, String allergy )
+		{
+			ID = ID_number;
+			first = firstname;
+			last = lastname;
+			birthdate = birth;
+			this.street = street;
+			this.aptnumber = aptnumber;
+			this.state = state;
+			this.zipcode = zipcode;
+			this.phone = phone;
+			this.notes = notes;
+			this.insurance = insurance;
+			this.insuranceinfo = insuranceinfo;
+			if(allergy == "")
+			{
+				this.allergy = "None";
+			}
+			else
+			{
+				this.allergy = allergy;
+			}
+			
+		}
+		
 		public Patient() {
 			// TODO Auto-generated constructor stub
 		}
@@ -31,8 +56,64 @@ public class Patient
 	
 		}
 		
-		public void getName()
+		public String getFirst()
 		{
+			return first;
+		}
+		
+		public String getLast()
+		{
+			return last;
+		}
+		
+		public Date getBirth()
+		{
+			return birthdate;
+		}
+		
+		public String getStreet()
+		{
+			return street;
+		}
+		
+		public int getAptNumber()
+		{
+			return aptnumber;
+		}
+		
+		public String getState()
+		{
+			return state;
+		}
+		
+		public int getZip()
+		{
+			return zipcode;
+		}
+		
+		public String getPhone()
+		{
+			return phone;
+		}
+		
+		public String getNotes()
+		{
+			return notes;
+		}
+		
+		public String getInsurance()
+		{
+			return insurance;
+		}
+		
+		public String getInsuranceInfo()
+		{
+			return insuranceinfo;
+		}
+		
+		public String getAllergy()
+		{
+			return allergy;
 		}
 		
 		public int getAppointmentId()

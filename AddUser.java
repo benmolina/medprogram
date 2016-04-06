@@ -55,7 +55,7 @@ public class AddUser extends JFrame {
 		
 		setTitle("Add a User");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 284, 350);
+		setBounds(100, 100, 300, 350);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
