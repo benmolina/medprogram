@@ -7,6 +7,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JTextPane;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import java.awt.ScrollPane;
@@ -20,6 +21,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.io.File;
+import java.text.DateFormat;
+import java.util.Calendar;
 
 
 
@@ -137,25 +141,29 @@ public class Records {
 		JScrollPane scrollPane = new JScrollPane(Apt);
 		scrollPane.setBounds(312, 54, 228, 100);
 		frmMedicalRecord.getContentPane().add(scrollPane);
-		//Add a button for exporting medical record
+		//Add a button for exporting a patient's medical record
 		JButton  txtExport = new JButton("Export");
 		txtExport.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				 String fileName="output.txt";
+				String userHomeFolder = System.getProperty("user.home")+"/Desktop";
+				String filename = String.format("%s%s_Medical_Record.txt",thispatient.getFirst(),thispatient.getLast());
+				File textFile = new File(userHomeFolder, filename);
+				DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+		        Date today = Calendar.getInstance().getTime();
+		        String reportDate = df.format(today);
 				  BufferedWriter out;
 				try {
-					out = new BufferedWriter(new FileWriter(fileName));
+					out = new BufferedWriter(new FileWriter(textFile));
 					out.write("Patient Name: "+thispatient.getFirst() + " " + thispatient.getLast()+"\n\n");
 					out.write(info+"\n\n");
 					out.write("Allergies: "+thispatient.getAllergy()+"\n\n");
-					out.write("Doctor Notes: "+thispatient.getNotes()+"\n");
-										out.close();
+					out.write("Doctor Notes: "+thispatient.getNotes()+"\n\n");
+					out.write("Exporting time: "+reportDate+"\n");
+					out.close();
+					JOptionPane.showMessageDialog(null, "The medical record has been exported to Desktop.");
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				  
-				
 			}
 		});
 		txtExport.setBounds(447, 325 , 89, 23);
@@ -163,3 +171,4 @@ public class Records {
 		
 	}
 }
+
