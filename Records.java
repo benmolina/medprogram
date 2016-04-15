@@ -3,12 +3,24 @@ import java.awt.EventQueue;
 import java.util.ArrayList;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JTextPane;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import java.awt.ScrollPane;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 
 
 public class Records {
@@ -48,7 +60,7 @@ public class Records {
 	private void initialize() {
 		frmMedicalRecord = new JFrame();
 		frmMedicalRecord.setTitle("Medical Record");
-		frmMedicalRecord.setBounds(100, 100, 564, 365);
+		frmMedicalRecord.setBounds(100, 100, 564, 400);
 		frmMedicalRecord.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frmMedicalRecord.getContentPane().setLayout(null);
 		
@@ -147,6 +159,7 @@ public class Records {
 			}
 		});
 		txtExport.setBounds(447, 325 , 89, 23);
-		frmMedicalRecord.getContentPane().add(txtExport);	
+		frmMedicalRecord.getContentPane().add(txtExport);
+		
 	}
 }
