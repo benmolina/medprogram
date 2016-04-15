@@ -125,6 +125,28 @@ public class Records {
 		JScrollPane scrollPane = new JScrollPane(Apt);
 		scrollPane.setBounds(312, 54, 228, 100);
 		frmMedicalRecord.getContentPane().add(scrollPane);
-		
+		//Add a button for exporting medical record
+		JButton  txtExport = new JButton("Export");
+		txtExport.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				 String fileName="output.txt";
+				  BufferedWriter out;
+				try {
+					out = new BufferedWriter(new FileWriter(fileName));
+					out.write("Patient Name: "+thispatient.getFirst() + " " + thispatient.getLast()+"\n\n");
+					out.write(info+"\n\n");
+					out.write("Allergies: "+thispatient.getAllergy()+"\n\n");
+					out.write("Doctor Notes: "+thispatient.getNotes()+"\n");
+										out.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				  
+				
+			}
+		});
+		txtExport.setBounds(447, 325 , 89, 23);
+		frmMedicalRecord.getContentPane().add(txtExport);	
 	}
 }
