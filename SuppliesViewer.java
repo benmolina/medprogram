@@ -14,11 +14,11 @@ import java.sql.*;
 public class SuppliesViewer extends AbstractTableModel{
 			
 	//Array to hold names of columns
-	private String[] columnName = {"Supply Description", "Supply Type", "Controlled Substance","Available Quantity",
+	private String[] columnName = {"Supply Description", "Supply Type", "Controlled Substance", "Price", "Available Quantity",
 			  "Reorder Quantity"};
 
 	//Two dimension array to hold the info each supply
-	private static Object[][] info = new String[20][5];
+        private static Object[][] info = new String[20][6];
 	
 	public int getColumnCount() {
 		return columnName.length;
@@ -50,11 +50,14 @@ public class SuppliesViewer extends AbstractTableModel{
         
         String Data = (String) info[row][col];
         String ColumnName = null;
-        if (col == 3){
+        if (col == 4){
         	ColumnName = "qtyOnHand";
         }
-        else if (col == 4){
+        else if (col == 5){
         	ColumnName = "reorderqty";
+        }
+        else if (col == 3){
+        	ColumnName = "supplyprice";
         }
         
         String Identifier = (String) info[row][0];
@@ -117,14 +120,29 @@ public class SuppliesViewer extends AbstractTableModel{
 				
 				//Check type of supply
 				type = Integer.parseInt(myRes.getString("supplytype"));
-					if (type == 1){
-						info[n][1] = "Disposable Item";
+					if (type == 0){
+						info[n][1] = "In-House Supply";
+					}
+					else if (type == 1){
+						info[n][1] = "Services";
 					}
 					else if (type == 2){
 						info[n][1] = "Medicine";
 					}
 					else if (type == 3){
 						info[n][1] = "Vaccine";
+					}
+					else if (type == 4){
+						info[n][1] = "Lab Work";
+					}
+					else if (type == 5){
+						info[n][1] = "Medical Supply";
+					}
+					else if (type == 6){
+						info[n][1] = "Over-Counter Item";
+					}
+					else if (type == 7){
+						info[n][1] = "Miscellaneous";
 					}
 					else
 						info[n][1] = "Other";
