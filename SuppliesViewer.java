@@ -157,8 +157,9 @@ public class SuppliesViewer extends AbstractTableModel{
 					else
 						info[n][2] = "Yes";
 				
-				info[n][3] = myRes.getString("qtyonhand");
-				info[n][4] = myRes.getString("reorderqty");
+				info[n][3] = myRes.getString("supplyprice");
+				info[n][4] = myRes.getString("qtyonhand");
+				info[n][5] = myRes.getString("reorderqty");
 
 				n++;
 				}
