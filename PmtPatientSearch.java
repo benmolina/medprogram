@@ -18,6 +18,7 @@ import javax.swing.event.ListSelectionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -63,7 +64,7 @@ public class PmtPatientSearch extends JFrame {
 	public PmtPatientSearch(String name) {
 		setTitle("Patient Lookup");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 790, 375);
+		setBounds(100, 100, 814, 387);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -167,6 +168,7 @@ public class PmtPatientSearch extends JFrame {
 				try {
 					listModel.clear();
 					Connection conn=DriverManager.getConnection("jdbc:mysql://99.98.84.144:3306/medprogram", "root", "medProgram");
+					//PreparedStatement pstmt = conn.prepareStatement(baseSQLQuery);
 					Statement stmt = conn.createStatement();
 					ResultSet loadPatients;
 								

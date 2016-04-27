@@ -101,13 +101,29 @@ public class List {
 				try{
 					Connection conn=DriverManager.getConnection("jdbc:mysql://99.98.84.144:3306/medprogram", "root", "medProgram");
 					Statement stmt = conn.createStatement();
-					stmt.executeUpdate("UPDATE appointments SET checkinstatus = 1 WHERE patientid = " + ID + " AND apptid = " + apptId + ";");
-					stmt.executeUpdate("UPDATE user SET userstatus = 5 where firstname = '" + docName[0] + "' and lastname = '" + docName[1] + "';");
+					String query = "UPDATE appointments SET checkinstatus = 1 WHERE patientid = ? AND apptid = ?;";
+					PreparedStatement pstmt = conn.prepareStatement(query);
+					pstmt.setInt(1,ID);
+					pstmt.setInt(2, apptId);
+					pstmt.executeUpdate();
+					//stmt.executeUpdate("UPDATE appointments SET checkinstatus = 1 WHERE patientid = " + ID + " AND apptid = " + apptId + ";");
+					query = "UPDATE user SET userstatus = 5 where firstname = ? and lastname = ?;";
+					pstmt = conn.prepareStatement(query);
+					pstmt.setString(1, docName[0]);
+					pstmt.setString(2, docName[1]);
+					pstmt.executeUpdate();
+					//stmt.executeUpdate("UPDATE user SET userstatus = 5 where firstname = '" + docName[0] + "' and lastname = '" + docName[1] + "';");
 					
 					System.out.println("Database updated");
 					ResultSet rs;
-					rs = stmt.executeQuery("SELECT ap.apptid, ph.patientid,ph.firstname,ph.lastname,ap.appttime,ap.visitreason,st.statusdesc,CONCAT(u.firstname, ' ', u.lastname) as doctor FROM medprogram.patientheader ph JOIN medprogram.appointments ap on ap.patientid = ph.patientid JOIN medprogram.status st on st.statusid = ap.checkinstatus JOIN medprogram.user u on ap.doctor = u.userid "
-							+ "WHERE ap.isdeleted = 0 and ph.firstname like '%" + Search.getFirst_Name() + "%' and ph.lastname like '%" + Search.getLast_Name() + "%'");
+					query = "SELECT ap.apptid, ph.patientid,ph.firstname,ph.lastname,ap.appttime,ap.visitreason,st.statusdesc,CONCAT(u.firstname, ' ', u.lastname) as doctor FROM medprogram.patientheader ph JOIN medprogram.appointments ap on ap.patientid = ph.patientid JOIN medprogram.status st on st.statusid = ap.checkinstatus JOIN medprogram.user u on ap.doctor = u.userid "
+							+ "WHERE ap.isdeleted = 0 and ph.firstname like ? and ph.lastname like ?";
+					pstmt = conn.prepareStatement(query);
+					pstmt.setString(1, Search.getFirst_Name());
+					pstmt.setString(2, Search.getLast_Name());
+					//rs = stmt.executeQuery("SELECT ap.apptid, ph.patientid,ph.firstname,ph.lastname,ap.appttime,ap.visitreason,st.statusdesc,CONCAT(u.firstname, ' ', u.lastname) as doctor FROM medprogram.patientheader ph JOIN medprogram.appointments ap on ap.patientid = ph.patientid JOIN medprogram.status st on st.statusid = ap.checkinstatus JOIN medprogram.user u on ap.doctor = u.userid "
+							//+ "WHERE ap.isdeleted = 0 and ph.firstname like '%" + Search.getFirst_Name() + "%' and ph.lastname like '%" + Search.getLast_Name() + "%'");
+					rs = pstmt.executeQuery();
 					listModel.clear();
 					Patients.clear();
 					while(rs.next()){
@@ -181,8 +197,18 @@ public class List {
 						//Display updated list
 						System.out.println("Database updated");
 						ResultSet rs;
-						rs = stmt.executeQuery("SELECT ap.apptid, ph.patientid,ph.firstname,ph.lastname,ap.appttime,ap.visitreason,st.statusdesc,CONCAT(u.firstname, ' ', u.lastname) as doctor FROM medprogram.patientheader ph JOIN medprogram.appointments ap on ap.patientid = ph.patientid JOIN medprogram.status st on st.statusid = ap.checkinstatus JOIN medprogram.user u on ap.doctor = u.userid "
-								+ "WHERE ap.isdeleted = 0 and ph.firstname like '%" + Search.getFirst_Name() + "%' and ph.lastname like '%" + Search.getLast_Name() + "%'");
+						
+						String query = "SELECT ap.apptid, ph.patientid,ph.firstname,ph.lastname,ap.appttime,ap.visitreason,st.statusdesc,CONCAT(u.firstname, ' ', u.lastname) as doctor FROM medprogram.patientheader ph JOIN medprogram.appointments ap on ap.patientid = ph.patientid JOIN medprogram.status st on st.statusid = ap.checkinstatus JOIN medprogram.user u on ap.doctor = u.userid "
+								+ "WHERE ap.isdeleted = 0 and ph.firstname like ? and ph.lastname like ?";
+						PreparedStatement pstmt = conn.prepareStatement(query);
+						pstmt.setString(1, Search.getFirst_Name());
+						pstmt.setString(2, Search.getLast_Name());
+						//rs = stmt.executeQuery("SELECT ap.apptid, ph.patientid,ph.firstname,ph.lastname,ap.appttime,ap.visitreason,st.statusdesc,CONCAT(u.firstname, ' ', u.lastname) as doctor FROM medprogram.patientheader ph JOIN medprogram.appointments ap on ap.patientid = ph.patientid JOIN medprogram.status st on st.statusid = ap.checkinstatus JOIN medprogram.user u on ap.doctor = u.userid "
+								//+ "WHERE ap.isdeleted = 0 and ph.firstname like '%" + Search.getFirst_Name() + "%' and ph.lastname like '%" + Search.getLast_Name() + "%'");
+						rs = pstmt.executeQuery();
+						
+						//rs = stmt.executeQuery("SELECT ap.apptid, ph.patientid,ph.firstname,ph.lastname,ap.appttime,ap.visitreason,st.statusdesc,CONCAT(u.firstname, ' ', u.lastname) as doctor FROM medprogram.patientheader ph JOIN medprogram.appointments ap on ap.patientid = ph.patientid JOIN medprogram.status st on st.statusid = ap.checkinstatus JOIN medprogram.user u on ap.doctor = u.userid "
+								//+ "WHERE ap.isdeleted = 0 and ph.firstname like '%" + Search.getFirst_Name() + "%' and ph.lastname like '%" + Search.getLast_Name() + "%'");
 						listModel.clear();
 						Patients.clear();
 						while(rs.next()){
@@ -284,8 +310,18 @@ public class List {
 						stmt.executeUpdate("UPDATE appointments set isdeleted=1 where patientid = " + ID + " AND apptid = " + apptId + ";");
 						System.out.println("Database updated");
 						ResultSet rs;
-						rs = stmt.executeQuery("SELECT ap.apptid, ph.patientid,ph.firstname,ph.lastname,ap.appttime,ap.visitreason,st.statusdesc,CONCAT(u.firstname, ' ', u.lastname) as doctor FROM medprogram.patientheader ph JOIN medprogram.appointments ap on ap.patientid = ph.patientid JOIN medprogram.status st on st.statusid = ap.checkinstatus JOIN medprogram.user u on ap.doctor = u.userid "
-								+ "WHERE ap.isdeleted = 0 and ph.firstname like '%" + Search.getFirst_Name() + "%' and ph.lastname like '%" + Search.getLast_Name() + "%'");
+						
+						String query = "SELECT ap.apptid, ph.patientid,ph.firstname,ph.lastname,ap.appttime,ap.visitreason,st.statusdesc,CONCAT(u.firstname, ' ', u.lastname) as doctor FROM medprogram.patientheader ph JOIN medprogram.appointments ap on ap.patientid = ph.patientid JOIN medprogram.status st on st.statusid = ap.checkinstatus JOIN medprogram.user u on ap.doctor = u.userid "
+								+ "WHERE ap.isdeleted = 0 and ph.firstname like ? and ph.lastname like ?";
+						PreparedStatement pstmt = conn.prepareStatement(query);
+						pstmt.setString(1, Search.getFirst_Name());
+						pstmt.setString(2, Search.getLast_Name());
+						//rs = stmt.executeQuery("SELECT ap.apptid, ph.patientid,ph.firstname,ph.lastname,ap.appttime,ap.visitreason,st.statusdesc,CONCAT(u.firstname, ' ', u.lastname) as doctor FROM medprogram.patientheader ph JOIN medprogram.appointments ap on ap.patientid = ph.patientid JOIN medprogram.status st on st.statusid = ap.checkinstatus JOIN medprogram.user u on ap.doctor = u.userid "
+								//+ "WHERE ap.isdeleted = 0 and ph.firstname like '%" + Search.getFirst_Name() + "%' and ph.lastname like '%" + Search.getLast_Name() + "%'");
+						rs = pstmt.executeQuery();
+						
+						//rs = stmt.executeQuery("SELECT ap.apptid, ph.patientid,ph.firstname,ph.lastname,ap.appttime,ap.visitreason,st.statusdesc,CONCAT(u.firstname, ' ', u.lastname) as doctor FROM medprogram.patientheader ph JOIN medprogram.appointments ap on ap.patientid = ph.patientid JOIN medprogram.status st on st.statusid = ap.checkinstatus JOIN medprogram.user u on ap.doctor = u.userid "
+								//+ "WHERE ap.isdeleted = 0 and ph.firstname like '%" + Search.getFirst_Name() + "%' and ph.lastname like '%" + Search.getLast_Name() + "%'");
 						listModel.clear();
 						Patients.clear();
 						while(rs.next()){

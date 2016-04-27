@@ -65,12 +65,16 @@ class Login extends JFrame  implements  ActionListener {
         	System.out.println("Connecting database...");
         	Connection con=DriverManager.getConnection("jdbc:mysql://99.98.84.144:3306/medprogram","root", "medProgram");
         	System.out.println("Database connected1!");   
-        	Statement sql=con.createStatement();    
+        	//Statement sql=con.createStatement();    
         	String uname=name.getText().trim();    
         	String Mima=new String(pwd.getPassword()).trim();//pwd.getText().trim();    
-        	String queryMima="select * from user where username='"+uname+"' and password='"+Mima+"' and isactive = 1;"; 	
+        	String queryMima="select * from user where username=? and password=? and isactive = 1;"; 
+        	PreparedStatement pstmt = con.prepareStatement(queryMima);
+        	pstmt.setString(1, uname);
+        	pstmt.setString(2, Mima);
+        	
         	System.out.println("Database connected2!");
-        	ResultSet rs=sql.executeQuery(queryMima); 
+        	ResultSet rs=pstmt.executeQuery(); 
         	if(rs.next()){ 
         		new MainInterface(uname);
         		con.close();     

@@ -40,7 +40,7 @@ public class Payment extends JFrame {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
+	public static void main() {
 		new Payment();
 	}
 
@@ -51,7 +51,7 @@ public class Payment extends JFrame {
 		invoiceList = new ArrayList<String>();
 		setTitle("Payment");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 590, 550);
+		setBounds(100, 100, 615, 571);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -113,11 +113,12 @@ public class Payment extends JFrame {
 						Connection myConn = DriverManager.getConnection("jdbc:mysql://99.98.84.144:3306/medprogram", "root", "medProgram");
 						
 						Statement myStmt = myConn.createStatement();
-						
+						String query = "select firstname, lastname from medprogram.patientheader where patientid = ?";
+						PreparedStatement pstmt = myConn.prepareStatement(query);
+						pstmt.setInt(1, id);
 						ResultSet myRes;
 						
-						myRes = myStmt.executeQuery("select firstname, lastname from medprogram.patientheader where patientid = " 
-								+ id + ";");						
+						myRes = pstmt.executeQuery();						
 						
 						while(myRes.next()){
 							firstName = myRes.getString("firstname");
@@ -170,17 +171,25 @@ public class Payment extends JFrame {
 						Connection myConn = DriverManager.getConnection("jdbc:mysql://99.98.84.144:3306/medprogram", "root", "medProgram");
 						
 						Statement myStmt = myConn.createStatement();
-						
 						ResultSet myRes;
 						
 						if (fullName.length < 2) {
-							myRes = myStmt.executeQuery("select patientid from medprogram.patientheader where firstname like '%"
-									+ fullName[0] + "%';");
+							//myRes = myStmt.executeQuery("select patientid from medprogram.patientheader where firstname like '%"
+									//+ fullName[0] + "%';");
+							String query = "select patientid from medprogram.patientheader where firstname like ?;";
+							PreparedStatement pstmt = myConn.prepareStatement(query);
+							pstmt.setString(1,"%" + fullName[0] + "%");
+							myRes = pstmt.executeQuery();
 						}
 						else
 						{
-							myRes = myStmt.executeQuery("select patientid from medprogram.patientheader where firstname like '%"
-									+ fullName[0] + "%' and lastname like '%" + fullName[1] + "%';");
+							//myRes = myStmt.executeQuery("select patientid from medprogram.patientheader where firstname like '%"
+									//+ fullName[0] + "%' and lastname like '%" + fullName[1] + "%';");
+							String query = "select patientid from medprogram.patientheader where firstname like ? and lastname like ?;";
+							PreparedStatement pstmt = myConn.prepareStatement(query);
+							pstmt.setString(1, "%" +fullName[0] + "%");
+							pstmt.setString(2, "%" +fullName[1] + "%");
+							myRes = pstmt.executeQuery();
 						}
 						
 						
@@ -299,7 +308,7 @@ public class Payment extends JFrame {
 		
 		//Button for adding supply/service
 		JButton add = new JButton("Add");
-		add.setBounds(503, 70, 75, 29);
+		add.setBounds(499, 69, 75, 29);
 		pnlItemInfo.add(add);
 		
 		JButton btnResetItem = new JButton("Reset");
@@ -467,19 +476,21 @@ public class Payment extends JFrame {
 					try {
 						Connection myConn = DriverManager.getConnection("jdbc:mysql://99.98.84.144:3306/medprogram", "root", "medProgram");
 						
-						Statement myStmt = myConn.createStatement();
-						
+						//Statement myStmt = myConn.createStatement();
+						String query = "select supplydesc, supplyprice from medprogram.supplies where "
+								+ "supplyid = ?";
+						PreparedStatement pstmt = myConn.prepareStatement(query);
+						pstmt.setInt(1, id);
 						ResultSet myRes;
 						
-						myRes = myStmt.executeQuery("select supplydesc, supplyprice from medprogram.supplies where "
-								+ "supplyid = " + id + ";");						
+						myRes = pstmt.executeQuery();						
 						
 						while(myRes.next()){
 							itemDescription = myRes.getString("supplydesc");
 							price = myRes.getString("supplyprice");
 							}
 						
-						myStmt.closeOnCompletion();
+						pstmt.closeOnCompletion();
 						
 						if (itemDescription.equals("") || price.equals("") || id == -1)
 						{

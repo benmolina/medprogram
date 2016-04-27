@@ -2,6 +2,7 @@ package medProgram;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Calendar;
@@ -39,7 +40,7 @@ public class AddPatient extends JFrame {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
+	public static void main() {
 		new AddPatient("");
 	}
 
@@ -162,7 +163,8 @@ public class AddPatient extends JFrame {
 				
 				try {
 					Connection conn=DriverManager.getConnection("jdbc:mysql://99.98.84.144:3306/medprogram", "root", "medProgram");
-					Statement stmt = conn.createStatement();
+					//Statement stmt = conn.createStatement();
+					
 					
 					String firstName, lastName, gender, street, city, state, zipcode, phonenumber, finalDOB;
 					Date dateofbirth;
@@ -251,13 +253,26 @@ public class AddPatient extends JFrame {
 					}
 					
 					//end of form checking
+					String query = "Insert into patientheader (firstname, lastname, dateofbirth, gender, street, city, state, zipcode, phonenumber)" 
+							+ "Values (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+					PreparedStatement pstmt = conn.prepareStatement(query);
+					pstmt.setString(1, firstName);
+					pstmt.setString(2, lastName);
+					pstmt.setString(3, finalDOB);
+					pstmt.setString(4, gender);
+					pstmt.setString(5, street);
+					pstmt.setString(6, city);
+					pstmt.setString(7, state);
+					pstmt.setString(8, zipcode);
+					pstmt.setString(9, phonenumber);
 					
+					pstmt.executeUpdate();
 					
-					stmt.executeUpdate("Insert into patientheader (firstname, lastname, dateofbirth, gender, street, city, state, zipcode, phonenumber)" 
+					/*stmt.executeUpdate("Insert into patientheader (firstname, lastname, dateofbirth, gender, street, city, state, zipcode, phonenumber)" 
 							+ "Values ('" + firstName + "', '" + lastName + "', '" + finalDOB + "', '" + gender + "', '" + street + "', '" + city + "', '" + state + "', '" + zipcode + "', '" + 
-							phonenumber + "');");
-					
-					stmt.closeOnCompletion();
+							phonenumber + "');");*/
+					pstmt.closeOnCompletion();
+					//stmt.closeOnCompletion();
 					
 					conn.close();
 					

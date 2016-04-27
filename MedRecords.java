@@ -106,8 +106,11 @@ public class MedRecords {
 					Statement iq = myConn.createStatement();
 					String query = "SELECT ph.patientid, ph.firstname, ph.lastname, ph.dateofbirth,ph.street,ph.aptnumber,ph.city,ph.state,ph.zipcode,ph.phonenumber,pd.importantnotes,pd.insuranceprovider,"
 	+ "pd.insuranceinfo,su.supplydesc FROM medprogram.patientheader ph "
-    + "RIGHT JOIN medprogram.patientdetails pd on pd.patientid = ph.patientid RIGHT JOIN medprogram.allergylist al on al.patientid = ph.patientid JOIN medprogram.supplies su on su.supplyid = al.supplyid";
-					ResultSet patientInfo = iq.executeQuery(query +  " WHERE ph.firstname like '%" + txtFirstName.getText() + "%' and ph.lastname like '%" + txtLastName.getText() + "%'");
+    + "RIGHT JOIN medprogram.patientdetails pd on pd.patientid = ph.patientid RIGHT JOIN medprogram.allergylist al on al.patientid = ph.patientid JOIN medprogram.supplies su on su.supplyid = al.supplyid WHERE ph.firstname like ? and ph.lastname like ?";
+					PreparedStatement pstmt = myConn.prepareStatement(query);
+					pstmt.setString(1,'%' + txtFirstName.getText() + '%');
+					pstmt.setString(2,'%' + txtLastName.getText() + '%');
+					ResultSet patientInfo = pstmt.executeQuery();
 					int ID = 0;
 					if (patientInfo.next())
 					{

@@ -12,9 +12,9 @@ public class MainInterface extends JFrame implements ActionListener {
 	JDesktopPane gui = new JDesktopPane();
 	
 	JMenuBar mb = new JMenuBar();  
-	JMenu  ManaSystem,appoViewer,checkIn,medRecord,usersetting,GetHelp,Supplies; 
+	JMenu  ManaSystem,appoViewer,checkIn,medRecord,usersetting,GetHelp,Supplies,addPatient,Payment; 
 	JMenuItem  outsystem,patientinfo,patientinfo1,addHospital,dropHospital,changepwd,addUser,aboutauthor,aboutsystem,usehelp,background,color1,manspace_1, 
- color2,color3, openApptViewer, openCheckIn,mntmOpenMedicalRecord,mntmRemoveUser,openSupplies;  
+ color2,color3, openApptViewer, openCheckIn,mntmOpenMedicalRecord,mntmRemoveUser,openSupplies,addpatient,payment,createAppt;  
 	JMenu backcolor;  
 	JPanel jp=new JPanel(); 
 	Container cp=getContentPane();
@@ -33,7 +33,9 @@ public class MainInterface extends JFrame implements ActionListener {
 		 */
 		//System management
 		ManaSystem=new JMenu("System Setting");  
-		//ManaSystem.setMnemonic('S'); 
+		//ManaSystem.setMnemonic('S');
+		//Add Patient
+		addPatient=new JMenu("Add Patient");
 		//Check in
 		checkIn=new JMenu("Check In"); 
 		//Appointment viewer
@@ -42,6 +44,8 @@ public class MainInterface extends JFrame implements ActionListener {
 		medRecord=new JMenu("Medical Record");
 		//Supplies
 		Supplies=new JMenu("Supplies");
+		//Payment
+		Payment=new JMenu("Payment");
 		//User setting
 		usersetting=new JMenu("User Setting");       
 		//Help
@@ -56,6 +60,7 @@ public class MainInterface extends JFrame implements ActionListener {
 		color2=new JMenuItem("Gray");      
   		color3=new JMenuItem("Black");
   		openApptViewer=new JMenuItem("Open Appointment Viewer");
+  		//createAppt = new JMenuItem("Create Appointment");
   		openCheckIn=new JMenuItem("Open Check In");
   		openSupplies=new JMenuItem("Open Supplies Viewer");
 		//background.add(backcolor);     
@@ -75,6 +80,8 @@ public class MainInterface extends JFrame implements ActionListener {
 		//Space leaved for later function in 'User Setting'
 		addUser=new JMenuItem("Add User");
 		//Info about author and system
+		addpatient=new JMenuItem("Add Patient");
+		payment=new JMenuItem("Patient Payment");
 		
 		aboutauthor=new JMenuItem("About Author");      
 		aboutsystem=new JMenuItem("About System"); 
@@ -84,10 +91,12 @@ public class MainInterface extends JFrame implements ActionListener {
 		
 		//Assemble properly
 		mb.add(ManaSystem);  
-		mb.add(checkIn);   
+		mb.add(checkIn); 
+		mb.add(addPatient);
 		mb.add(appoViewer);   
 		mb.add(medRecord);
 		mb.add(Supplies);
+		mb.add(Payment);
 		
 		mntmOpenMedicalRecord = new JMenuItem("Open Medical Record");
 		medRecord.add(mntmOpenMedicalRecord);
@@ -97,7 +106,10 @@ public class MainInterface extends JFrame implements ActionListener {
 		ManaSystem.add(outsystem);
 		checkIn.add(openCheckIn);
 		appoViewer.add(openApptViewer);
+		//appoViewer.add(createAppt);
 		Supplies.add(openSupplies);
+		addPatient.add(addpatient);
+		Payment.add(payment);
 		
 		mntmTimeManagement = new JMenuItem("Time Management");
 		appoViewer.add(mntmTimeManagement);
@@ -120,7 +132,10 @@ public class MainInterface extends JFrame implements ActionListener {
 		mntmRemoveUser.addActionListener(this);
 		mntmOpenMedicalRecord.addActionListener(this);
 		openSupplies.addActionListener(this);
-		//addUser.addActionListener(this);       
+		addpatient.addActionListener(this);
+		payment.addActionListener(this);
+		//createAppt.addActionListener(this);
+		addUser.addActionListener(this);       
 		aboutauthor.addActionListener(this);      
 		aboutsystem.addActionListener(this);   
 		usehelp.addActionListener(this);
@@ -205,6 +220,14 @@ public class MainInterface extends JFrame implements ActionListener {
 			SuppliesViewer supplies = new SuppliesViewer();
 			supplies.main();
 		}
+		
+		if(e.getSource()==addpatient){
+			AddPatient add = new AddPatient("");
+			//add.main();
+		}
+		if(e.getSource()==payment) {
+			Payment pay = new Payment();
+		}
 		if (e.getSource() == mntmRemoveUser) {
 			new RemoveUser();
 		}
@@ -212,6 +235,10 @@ public class MainInterface extends JFrame implements ActionListener {
 		if (e.getSource() == mntmTimeManagement) {
 			new TimeManagement();
 		}
+		
+		//if (e.getSource() == createAppt) {
+			//new CreateAppt();
+		//}
 	}
 
 	public static void main(String[]args) { 

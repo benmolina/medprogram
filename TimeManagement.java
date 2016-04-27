@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -114,9 +115,12 @@ public class TimeManagement extends JFrame {
 					int id = -1;
 					ResultSet changeStatus;
 					String [] splitDocName = lstDocs.getSelectedValue().split(" ");
-					changeStatus = stmt.executeQuery("Select u.userid from medprogram.user u "
-							+ "where u.firstname = '" + splitDocName[0] + "' and u.lastname = '" + splitDocName[1]
-									+ "' and u.userrole = 2;");
+					String query = "Select u.userid from medprogram.user u "
+							+ "where u.firstname = ? and u.lastname = ? and u.userrole = 2;";
+					PreparedStatement pstmt = conn.prepareStatement(query);
+					pstmt.setString(1,splitDocName[0]);
+					pstmt.setString(2,splitDocName[1]);
+					changeStatus = pstmt.executeQuery();
 					
 					while(changeStatus.next()) {
 						id = changeStatus.getInt("userid");
@@ -166,9 +170,12 @@ public class TimeManagement extends JFrame {
 					int id = -1;
 					ResultSet changeStatus;
 					String [] splitDocName = lstDocs.getSelectedValue().split(" ");
-					changeStatus = stmt.executeQuery("Select u.userid from medprogram.user u "
-							+ "where u.firstname = '" + splitDocName[0] + "' and u.lastname = '" + splitDocName[1]
-									+ "' and u.userrole = 2;");
+					String query = "Select u.userid from medprogram.user u "
+							+ "where u.firstname = ? and u.lastname = ? and u.userrole = 2;";
+					PreparedStatement pstmt = conn.prepareStatement(query);
+					pstmt.setString(1,splitDocName[0]);
+					pstmt.setString(2,splitDocName[1]);
+					changeStatus = pstmt.executeQuery();
 					
 					while(changeStatus.next()) {
 						id = changeStatus.getInt("userid");
@@ -218,10 +225,12 @@ public class TimeManagement extends JFrame {
 					int id = -1;
 					ResultSet changeStatus;
 					String [] splitDocName = lstDocs.getSelectedValue().split(" ");
-					changeStatus = stmt.executeQuery("Select u.userid from medprogram.user u "
-							+ "where u.firstname = '" + splitDocName[0] + "' and u.lastname = '" + splitDocName[1]
-									+ "' and u.userrole = 2;");
-					
+					String query = "Select u.userid from medprogram.user u "
+							+ "where u.firstname = ? and u.lastname = ? and u.userrole = 2;";
+					PreparedStatement pstmt = conn.prepareStatement(query);
+					pstmt.setString(1,splitDocName[0]);
+					pstmt.setString(2,splitDocName[1]);
+					changeStatus = pstmt.executeQuery();
 					while(changeStatus.next()) {
 						id = changeStatus.getInt("userid");
 					}

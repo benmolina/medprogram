@@ -103,6 +103,11 @@ public class Records {
 					  "Address:   " + thispatient.getStreet() + " " + thispatient.getAptNumber()+ " "+ thispatient.getState() + "," + thispatient.getZip() + "\n\n" +
 					  "Phone:     " + thispatient.getPhone() + "\n\n" +
 					  "Insurance: " + thispatient.getInsurance() + "\n\n" + thispatient.getInsuranceInfo();
+		String birth_out = "Birthdate: " + birth;
+		String address_out = "Address:   " + thispatient.getStreet() + " " + thispatient.getAptNumber()+ " "+ thispatient.getState() + "," + thispatient.getZip();
+		String phone_out = "Phone:     " + thispatient.getPhone();
+		String insurance_out =  "Insurance: " + thispatient.getInsurance();
+		String insurance_info_out = thispatient.getInsuranceInfo();
 		Info.setText(info);
 		frmMedicalRecord.getContentPane().add(Info);
 		
@@ -155,9 +160,21 @@ public class Records {
 				try {
 					out = new BufferedWriter(new FileWriter(textFile));
 					out.write("Patient Name: "+thispatient.getFirst() + " " + thispatient.getLast()+"\n\n");
-					out.write(info+"\n\n");
+					out.newLine();
+					out.write(birth_out);
+					out.newLine();
+					out.write(address_out);
+					out.newLine();
+					out.write(phone_out);
+					out.newLine();
+					out.write(insurance_out);
+					out.newLine();
+					out.write(insurance_info_out);
+					out.newLine();
 					out.write("Allergies: "+thispatient.getAllergy()+"\n\n");
+					out.newLine();
 					out.write("Doctor Notes: "+thispatient.getNotes()+"\n\n");
+					out.newLine();
 					out.write("Exporting time: "+reportDate+"\n");
 					out.close();
 					JOptionPane.showMessageDialog(null, "The medical record has been exported to Desktop.");
@@ -171,4 +188,3 @@ public class Records {
 		
 	}
 }
-
