@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -194,9 +195,12 @@ public class AddUser extends JFrame {
 						JOptionPane.showMessageDialog(null,"The confirm password must match the desired password");
 						return;
 					}
-					
-					ResultSet id = stmt.executeQuery("Select roleid from medprogram.userroles where roledesc = '" +
-					cbxRole.getItemAt(cbxRole.getSelectedIndex()) + "';");
+					String query = "Select roleid from medprogram.userroles where roledesc =?;";
+					PreparedStatement pstmt = conn.prepareStatement(query);
+					pstmt.setString(1,cbxRole.getItemAt(cbxRole.getSelectedIndex()).toString());
+					//ResultSet id = stmt.executeQuery("Select roleid from medprogram.userroles where roledesc = '" +
+					//cbxRole.getItemAt(cbxRole.getSelectedIndex()) + "';");
+					ResultSet id = pstmt.executeQuery();
 					
 					while(id.next()) {
 						getId = id.getInt("roleid");
@@ -209,9 +213,13 @@ public class AddUser extends JFrame {
 					"for assistance");
 						return;
 					}
+					query = "Select username from medprogram.user where username =?;";
+					pstmt = conn.prepareStatement(query);
+					pstmt.setString(1, username);
 					
-					ResultSet getUsername = stmt.executeQuery("Select username from medprogram.user where username = '" + username 
-							+ "';");
+					//ResultSet getUsername = stmt.executeQuery("Select username from medprogram.user where username = '" + username 
+							//+ "';");
+					ResultSet getUsername = pstmt.executeQuery();
 					
 					while(getUsername.next()) {
 						numOfUsernames += 1;
@@ -223,12 +231,20 @@ public class AddUser extends JFrame {
 						JOptionPane.showMessageDialog(null,"This username is already in use. Please select another username");
 						return;
 					}
+					query = "Insert into user (username, password, firstname, lastname, userrole)" 
+							+ "Values (?,?,?,?,?);";
+					pstmt = conn.prepareStatement(query);
+					pstmt.setString(1, username);
+					pstmt.setString(2, password);
+					pstmt.setString(3, firstName);
+					pstmt.setString(4, lastName);
+					pstmt.setInt(5, getId);
+					pstmt.executeUpdate();
+					//stmt.executeUpdate("Insert into user (username, password, firstname, lastname, userrole)" 
+							//+ "Values ('" + username + "', '" + password + "', '" + firstName + "', '" + lastName + "', " + 
+							//getId + ");");
 					
-					stmt.executeUpdate("Insert into user (username, password, firstname, lastname, userrole)" 
-							+ "Values ('" + username + "', '" + password + "', '" + firstName + "', '" + lastName + "', " + 
-							getId + ");");
-					
-					stmt.closeOnCompletion();
+					pstmt.closeOnCompletion();
 					
 					conn.close();
 					

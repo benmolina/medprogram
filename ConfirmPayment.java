@@ -21,6 +21,7 @@ import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -97,25 +98,31 @@ public class ConfirmPayment extends JFrame {
 		
 		try {
 			
+
 			Connection conn=DriverManager.getConnection("jdbc:mysql://99.98.84.144:3306/medprogram", "root", "medProgram");
-			Statement stmt = conn.createStatement();
+			//Statement stmt = conn.createStatement();
 			
 			ResultSet getBalance;
 			
-			getBalance = stmt.executeQuery("select max(pmtbalance) as 'balance' from medprogram.paymentheader where"
-					+ " patientid = " + id + " and pmtdate in (select max(pmtdate) from medprogram.paymentheader);");
-			
+			//getBalance = stmt.executeQuery("select max(pmtbalance) as 'balance' from medprogram.paymentheader where"
+					//+ " patientid = " + id + " and pmtdate in (select max(pmtdate) from medprogram.paymentheader);");
+			String query = "select max(pmtbalance) as 'balance' from medprogram.paymentheader where"
+						+ " patientid = ? and pmtdate in (select max(pmtdate) from medprogram.paymentheader);";
+			PreparedStatement pstmt = conn.prepareStatement(query);
+			pstmt.setInt(1, id);
+			getBalance = pstmt.executeQuery();
 			while(getBalance.next())
 			{
 				totalBalance += getBalance.getFloat("balance");
 			}
-			
-			stmt.closeOnCompletion();
+			pstmt.closeOnCompletion();
+			//stmt.closeOnCompletion();
 			
 			conn.close();
 			
 			String testing = String.format("%.2f", totalBalance);
 			txtRemBalance.setText(testing);
+			
 			
 			
 		} catch (Exception ex) {
@@ -162,6 +169,7 @@ public class ConfirmPayment extends JFrame {
 		pnlConfirm.add(lblComments);
 		
 		JTextArea txtComments = new JTextArea();
+		txtComments.setLineWrap(true);
 		txtComments.setBounds(6, 85, 265, 62);
 		pnlConfirm.add(txtComments);
 		
@@ -205,43 +213,64 @@ public class ConfirmPayment extends JFrame {
 						}
 						try {
 							
-								Connection conn=DriverManager.getConnection("jdbc:mysql://99.98.84.144:3306/medprogram", "root", "medProgram");
-								Statement stmt = conn.createStatement();
-								
-								stmt.executeUpdate("Insert into paymentheader(patientid, pmttotal, pmtdate, pmtmethod, methodconfirm, comments, pmtbalance)"
-										+ "Values(" + patientID + ", " + amountPaid + ", '" + finalDate + "', '" + method + "', '" + confirmation 
-										+ "', '" + comments + "', " + (totalBalance - amountPaid) + ");");
-								
-								stmt.closeOnCompletion();
-								
-								ResultSet maxId;
-								
-								maxId = stmt.executeQuery("Select max(pmtheaderid) as 'headerid' from medprogram.paymentheader");
-								int currentHeaderId = -1;
-								
-								while (maxId.next())
-								{
-									currentHeaderId = maxId.getInt("headerid");
-								}
-								
-								if (currentHeaderId == -1)
-								{
-									JOptionPane.showMessageDialog(null, "Unable to get Header Id.");
-									return;
-								}
-								
+							Connection conn=DriverManager.getConnection("jdbc:mysql://99.98.84.144:3306/medprogram", "root", "medProgram");
+							Statement stmt = conn.createStatement();
+							
+							//stmt.executeUpdate("Insert into paymentheader(patientid, pmttotal, pmtdate, pmtmethod, methodconfirm, comments, pmtbalance)"
+									//+ "Values(" + patientID + ", " + amountPaid + ", '" + finalDate + "', '" + method + "', '" + confirmation 
+									//+ "', '" + comments + "', " + (totalBalance - amountPaid) + ");");
+							String query = "Insert into paymentheader(patientid, pmttotal, pmtdate, pmtmethod, methodconfirm, comments, pmtbalance)"
+									+ "Values(?,?,?,?,?,?,?);";
+							PreparedStatement pstmt = conn.prepareStatement(query);
+							pstmt.setInt(1, patientID);
+							pstmt.setFloat(2, amountPaid);
+							pstmt.setString(3, finalDate);
+							pstmt.setString(4, method);
+							pstmt.setString(5, confirmation);
+							pstmt.setString(6, comments);
+							pstmt.setFloat(7, (totalBalance - amountPaid));
+							pstmt.executeUpdate();
+							//stmt.closeOnCompletion();
+							pstmt.closeOnCompletion();
+							ResultSet maxId;
+							
+							maxId = stmt.executeQuery("Select max(pmtheaderid) as 'headerid' from medprogram.paymentheader");
+							int currentHeaderId = -1;
+							
+							while (maxId.next())
+							{
+								currentHeaderId = maxId.getInt("headerid");
+							}
+							
+							if (currentHeaderId == -1)
+							{
+								JOptionPane.showMessageDialog(null, "Unable to get Header Id.");
+								return;
+							}
+							
+							try
+							{
 								if (invoiceDetails.size() > 0)
 								{									
 									for(int i = 0; i < invoiceDetails.size(); i++) {
-										String updateQuery = "Insert into paymentdetails(pmtheaderid, supplyid, supplydesc, supplyamt, supplytotal, discountamt)"
-												+ "Values(" + currentHeaderId + ",";
-										
+										//String updateQuery = "Insert into paymentdetails(pmtheaderid, supplyid, supplydesc, supplyamt, supplytotal, discountamt)"
+												//+ "Values(" + currentHeaderId + ",";
+										query = "Insert into paymentdetails(pmtheaderid, supplyid, supplydesc, supplyamt, supplytotal, discountamt)"
+												+ "Values(?,?,?,?,?,?);";
 										String [] temp = invoiceDetails.get(i).split("\\s+");
-										updateQuery += temp[0] + ", '" + temp[1] + "', " + temp[3] + ", " + temp[5] + ", " + temp[7] + ");";
+										//updateQuery += temp[0] + ", '" + temp[1] + "', " + temp[3] + ", " + temp[5] + ", " + temp[7] + ");";
 										
-										stmt.executeUpdate(updateQuery);
-										
-										stmt.closeOnCompletion();
+										pstmt = conn.prepareStatement(query);
+										pstmt.setInt(1, currentHeaderId);
+										pstmt.setInt(2, Integer.parseInt(temp[0]));
+										pstmt.setString(3, temp[1]);
+										pstmt.setInt(4, Integer.parseInt(temp[3]));
+										pstmt.setFloat(5, Float.parseFloat(temp[5]));
+										pstmt.setFloat(6, Float.parseFloat(temp[7]));
+										pstmt.executeUpdate();
+										//stmt.executeUpdate(updateQuery);
+										pstmt.closeOnCompletion();
+										//stmt.closeOnCompletion();
 										
 										ResultSet supplyEdit;
 										
@@ -279,15 +308,26 @@ public class ConfirmPayment extends JFrame {
 									JOptionPane.showMessageDialog(null, "Payment was successful!");
 									
 									dispose();
-								}
-								else
-								{
-									stmt.executeUpdate("Insert into paymentdetails(pmtheaderid, supplyid, supplydesc)"
-											+ "Values(" + currentHeaderId + ", " + 0 + ", 'Payment');");
-									
-									JOptionPane.showMessageDialog(null, "Payment was successful!");
-									dispose();
-								}
+									}
+									else
+									{
+										stmt.executeUpdate("Insert into paymentdetails(pmtheaderid, supplyid, supplydesc)"
+												+ "Values(" + currentHeaderId + ", " + 0 + ", 'Payment');");
+										
+										JOptionPane.showMessageDialog(null, "Payment was successful!");
+										dispose();
+									}
+							}
+							
+							catch (Exception ex)
+							{
+								stmt.executeUpdate("Insert into paymentdetails(pmtheaderid, supplyid, supplydesc)"
+										+ "Values(" + currentHeaderId + ", " + 0 + ", 'Payment');");
+								
+								JOptionPane.showMessageDialog(null, "Payment was successful!");
+								dispose();
+							}
+														
 								
 							} catch (SQLException e1) {
 								// TODO Auto-generated catch block

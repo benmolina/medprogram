@@ -20,6 +20,7 @@ import java.awt.event.WindowEvent;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -323,12 +324,20 @@ public class CreateAppt extends JFrame {
 			try {
 				
 				Connection conn=DriverManager.getConnection("jdbc:mysql://99.98.84.144:3306/medprogram", "root", "medProgram");
-				Statement stmt = conn.createStatement();
+				//Statement stmt = conn.createStatement();
+				
+				String query = "SELECT ph.patientid, ph.firstname,ph.lastname,ph.dateofbirth FROM medprogram.patientheader ph JOIN medprogram.patientdetails pd on ph.patientid = pd.patientid "
+						+ "WHERE ph.firstname = ? and ph.lastname = ? and ph.dateofbirth = ?;";
+				PreparedStatement pstmt = conn.prepareStatement(query);
+				pstmt.setString(1, txtFirstName.getText());
+				pstmt.setString(2, txtLastName.getText());
+				pstmt.setDate(3, dateOfBirth);
 
 					ResultSet firstRs, secondRs, thirdRs;
 					System.out.println(txtFirstName.getText() + " " + txtLastName.getText() + " " + dateOfBirth);
-					firstRs = stmt.executeQuery("SELECT ph.patientid, ph.firstname,ph.lastname,ph.dateofbirth FROM medprogram.patientheader ph JOIN medprogram.patientdetails pd on ph.patientid = pd.patientid "
-							+ "WHERE ph.firstname = '" + txtFirstName.getText() + "' and ph.lastname = '" + txtLastName.getText() + "' and ph.dateofbirth = '" + dateOfBirth + "';");
+					//firstRs = stmt.executeQuery("SELECT ph.patientid, ph.firstname,ph.lastname,ph.dateofbirth FROM medprogram.patientheader ph JOIN medprogram.patientdetails pd on ph.patientid = pd.patientid "
+							//+ "WHERE ph.firstname = '" + txtFirstName.getText() + "' and ph.lastname = '" + txtLastName.getText() + "' and ph.dateofbirth = '" + dateOfBirth + "';");
+					firstRs = pstmt.executeQuery();
 					while (firstRs.next()){
 						pid = firstRs.getInt("patientid");
 					}
@@ -340,32 +349,52 @@ public class CreateAppt extends JFrame {
 					}
 						
 
-					stmt.closeOnCompletion();
+					//stmt.closeOnCompletion();
+					pstmt.closeOnCompletion();
 					
-					secondRs = stmt.executeQuery("SELECT u.userid FROM medprogram.user u WHERE u.username = '" + cbxUserCreator.getItemAt(cbxUserCreator.getSelectedIndex()) + "';");
+					query = "SELECT u.userid FROM medprogram.user u WHERE u.username = ?;";
+					pstmt = conn.prepareStatement(query);
+					pstmt.setString(1, cbxUserCreator.getItemAt(cbxUserCreator.getSelectedIndex()));
+					secondRs = pstmt.executeQuery();
+					//secondRs = stmt.executeQuery("SELECT u.userid FROM medprogram.user u WHERE u.username = '" + cbxUserCreator.getItemAt(cbxUserCreator.getSelectedIndex()) + "';");
 
 						while(secondRs.next())
 						{
 							creator = secondRs.getInt("userid");
 						}
 						
-					stmt.closeOnCompletion();
-			
-					thirdRs = stmt.executeQuery("SELECT u.userid FROM medprogram.user u WHERE u.username = '" + cbxDoctor.getItemAt(cbxDoctor.getSelectedIndex()) + "';");
+					//stmt.closeOnCompletion();
+					pstmt.closeOnCompletion();
+					
+					query = "SELECT u.userid FROM medprogram.user u WHERE u.username = ?;";
+					pstmt = conn.prepareStatement(query);
+					pstmt.setString(1, cbxDoctor.getItemAt(cbxDoctor.getSelectedIndex()));
+					//thirdRs = stmt.executeQuery("SELECT u.userid FROM medprogram.user u WHERE u.username = '" + cbxDoctor.getItemAt(cbxDoctor.getSelectedIndex()) + "';");
+					thirdRs = pstmt.executeQuery();
 					while (thirdRs.next()){
 						doctor = thirdRs.getInt("userid");
 					}
 					
-					stmt.closeOnCompletion();
-					
+					//stmt.closeOnCompletion();
+					pstmt.closeOnCompletion();
 					reason = txtReason.getText();
 					commentNotes = txtComments.getText();
 					
 					System.out.println(pid + " " + currentTime + " " + doctor + " " + reason + " " + commentNotes + " " + creator);
 					
-					stmt.executeUpdate("INSERT INTO appointments (patientid, appttime, doctor, visitreason, comments, creatoruser)" 
-					+ " VALUES (" + pid + ", '" + currentTime + "', " + doctor +", '" + reason + "', '" + commentNotes + "', " + creator + ")");
-					stmt.closeOnCompletion();
+					query = "INSERT INTO appointments (patientid, appttime, doctor, visitreason, comments, creatoruser)" 
+							+ " VALUES (?,?,?,?,?,?)";
+					pstmt = conn.prepareStatement(query);
+					pstmt.setInt(1, pid);
+					pstmt.setString(2, currentTime);
+					pstmt.setInt(3, doctor);
+					pstmt.setString(4, reason);
+					pstmt.setString(5, commentNotes);
+					pstmt.setInt(6, creator);
+					pstmt.executeUpdate();
+					//stmt.executeUpdate("INSERT INTO appointments (patientid, appttime, doctor, visitreason, comments, creatoruser)" 
+					//+ " VALUES (" + pid + ", '" + currentTime + "', " + doctor +", '" + reason + "', '" + commentNotes + "', " + creator + ")");
+					pstmt.closeOnCompletion();
 					
 					conn.close();
 					

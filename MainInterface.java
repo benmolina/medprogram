@@ -14,15 +14,13 @@ public class MainInterface extends JFrame implements ActionListener {
 	JMenuBar mb = new JMenuBar();  
 	JMenu  ManaSystem,appoViewer,checkIn,medRecord,usersetting,GetHelp,Supplies; 
 	JMenuItem  outsystem,patientinfo,patientinfo1,addHospital,dropHospital,changepwd,addUser,aboutauthor,aboutsystem,usehelp,background,color1,manspace_1, 
- color2,color3, openApptViewer, openCheckIn,mntmOpenMedicalRecord,mntmRemoveUser,openSupplies;  
+ color2,color3, openApptViewer, openCheckIn,mntmOpenMedicalRecord,mntmRemoveUser,openSupplies, mntmTimeManagement,
+ mnPayment, mntmOpenPaymentWindow, mntmAddPatient;  
 	JMenu backcolor;  
 	JPanel jp=new JPanel(); 
 	Container cp=getContentPane();
 	String username; 
 	boolean isLoggedIn = false;
-	private JMenuItem mntmTimeManagement;
-//	private JMenuItem mntmOpenMedicalRecord;
-//	private JMenuItem mntmRemoveUser;
 	
 	MainInterface(String username) { 
 		
@@ -89,8 +87,17 @@ public class MainInterface extends JFrame implements ActionListener {
 		mb.add(medRecord);
 		mb.add(Supplies);
 		
+		mntmAddPatient = new JMenuItem("Add Patient");
+		medRecord.add(mntmAddPatient);
+		
 		mntmOpenMedicalRecord = new JMenuItem("Open Medical Record");
 		medRecord.add(mntmOpenMedicalRecord);
+		
+		mnPayment = new JMenu("Payment");
+		mb.add(mnPayment);
+		
+		mntmOpenPaymentWindow = new JMenuItem("Open Payment Window");
+		mnPayment.add(mntmOpenPaymentWindow);
 		mb.add(usersetting);  
 		mb.add(GetHelp);
 		ManaSystem.add(backcolor);   
@@ -127,6 +134,9 @@ public class MainInterface extends JFrame implements ActionListener {
 		openApptViewer.addActionListener(this);
 		openCheckIn.addActionListener(this);
 		mntmTimeManagement.addActionListener(this);
+		mntmOpenPaymentWindow.addActionListener(this);
+		mntmAddPatient.addActionListener(this);
+
 		
 		
 		jp.setLayout(new BorderLayout());       
@@ -211,6 +221,14 @@ public class MainInterface extends JFrame implements ActionListener {
 		
 		if (e.getSource() == mntmTimeManagement) {
 			new TimeManagement();
+		}
+		
+		if (e.getSource() == mntmAddPatient) {
+			new AddPatient();
+		}
+		
+		if (e.getSource() == mntmOpenPaymentWindow) {
+			new Payment();
 		}
 	}
 

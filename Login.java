@@ -63,14 +63,19 @@ class Login extends JFrame  implements  ActionListener {
         } 
         try{ 
         	System.out.println("Connecting database...");
+        	DriverManager.setLoginTimeout(10);
         	Connection con=DriverManager.getConnection("jdbc:mysql://99.98.84.144:3306/medprogram","root", "medProgram");
         	System.out.println("Database connected1!");   
-        	Statement sql=con.createStatement();    
+        	//Statement sql=con.createStatement();    
         	String uname=name.getText().trim();    
         	String Mima=new String(pwd.getPassword()).trim();//pwd.getText().trim();    
-        	String queryMima="select * from user where username='"+uname+"' and password='"+Mima+"' and isactive = 1;"; 	
+        	String queryMima="select * from user where username=? and password=? and isactive = 1;"; 
+        	PreparedStatement pstmt = con.prepareStatement(queryMima);
+        	pstmt.setString(1, uname);
+        	pstmt.setString(2, Mima);
+        	
         	System.out.println("Database connected2!");
-        	ResultSet rs=sql.executeQuery(queryMima); 
+        	ResultSet rs=pstmt.executeQuery(); 
         	if(rs.next()){ 
         		new MainInterface(uname);
         		con.close();     
@@ -80,9 +85,10 @@ class Login extends JFrame  implements  ActionListener {
         		JOptionPane.showMessageDialog(null,"Username or password is not correct, or the user account has been deactivated. Please try again.","Attention!",  JOptionPane.YES_NO_OPTION);        
         	} 
         	name.setText("");  
-        	pwd.setText("");    
+        	pwd.setText("");       
         }  
         catch(SQLException g){ 
+        	JOptionPane.showMessageDialog(null,"Unable to connect to database. Please contact System Administrator","Attention!",  JOptionPane.YES_NO_OPTION);
         	System.out.println(g.getErrorCode()); 
         	System.out.println(g.getMessage());     
         }    
