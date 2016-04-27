@@ -18,6 +18,7 @@ import javax.swing.event.ListSelectionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -29,6 +30,7 @@ import javax.swing.SwingUtilities;
 
 import java.awt.Color;
 import javax.swing.border.LineBorder;
+import javax.swing.JFormattedTextField;
 
 public class PmtPatientSearch extends JFrame {
 
@@ -38,8 +40,6 @@ public class PmtPatientSearch extends JFrame {
 	private JTextField txtID;
 	private JLabel lblPhoneNumber;
 	private JTextField txtPhoneNum;
-	private JLabel lblDateOfBirth;
-	private JTextField txtDOB;
 	private int selection = -1;
 	private static DefaultListModel<String> listModel;
 	private String baseSQLQuery = "Select patientid, lastname, firstname, dateofbirth, phonenumber From medprogram.patientheader where isactive = 1";
@@ -63,28 +63,28 @@ public class PmtPatientSearch extends JFrame {
 	public PmtPatientSearch(String name) {
 		setTitle("Patient Lookup");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 790, 375);
+		setBounds(100, 100, 814, 387);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
 		JLabel lblLastName = new JLabel("Last Name");
-		lblLastName.setBounds(168, 6, 70, 16);
+		lblLastName.setBounds(218, 6, 70, 16);
 		contentPane.add(lblLastName);
 		
 		txtLastName = new JTextField();
-		txtLastName.setBounds(165, 24, 134, 28);
+		txtLastName.setBounds(215, 24, 134, 28);
 		contentPane.add(txtLastName);
 		txtLastName.setColumns(10);
 		
 		JLabel lblFirstName = new JLabel("First Name");
-		lblFirstName.setBounds(331, 6, 70, 16);
+		lblFirstName.setBounds(443, 6, 70, 16);
 		contentPane.add(lblFirstName);
 		
 		txtFirstName = new JTextField();
 		txtFirstName.setColumns(10);
-		txtFirstName.setBounds(328, 24, 134, 28);
+		txtFirstName.setBounds(440, 24, 134, 28);
 		contentPane.add(txtFirstName);
 		
 		JLabel lblId = new JLabel("ID");
@@ -101,18 +101,10 @@ public class PmtPatientSearch extends JFrame {
 		contentPane.add(lblPhoneNumber);
 		
 		txtPhoneNum = new JTextField();
+		txtPhoneNum.setToolTipText("When searching for a phone number, be sure to use the parenthetical format [ (123) 456-7890 ]");
 		txtPhoneNum.setColumns(10);
 		txtPhoneNum.setBounds(654, 24, 134, 28);
 		contentPane.add(txtPhoneNum);
-		
-		lblDateOfBirth = new JLabel("Date of Birth");
-		lblDateOfBirth.setBounds(495, 6, 98, 16);
-		contentPane.add(lblDateOfBirth);
-		
-		txtDOB = new JTextField();
-		txtDOB.setColumns(10);
-		txtDOB.setBounds(491, 24, 134, 28);
-		contentPane.add(txtDOB);
 		
 		JList<String> lstPatients = new JList<String>();
 		listModel = new DefaultListModel<String>();
@@ -125,7 +117,7 @@ public class PmtPatientSearch extends JFrame {
 					selection = lstPatients.getSelectedIndex();
 			}
 		});
-		lstPatients.setBounds(6, 90, 778, 228);
+		lstPatients.setBounds(6, 90, 802, 228);
 		contentPane.add(lstPatients);
 		
 		JButton btnSelect = new JButton("Select");
@@ -145,28 +137,29 @@ public class PmtPatientSearch extends JFrame {
 					}		
 			}
 		});
-		btnSelect.setBounds(671, 318, 117, 29);
+		btnSelect.setBounds(691, 318, 117, 29);
 		contentPane.add(btnSelect);
 		
 		btnSearch = new JButton("Search");
 		btnSearch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (txtID.getText().length() > 0)
-					baseSQLQuery += " and patientid like '%" + txtID.getText() + "%'";
+					baseSQLQuery += " and patientid like '" + txtID.getText() + "%'";
 				if (txtLastName.getText().length() > 0)
-					baseSQLQuery += " and lastname like '%" + txtLastName.getText() + "%'";
+					baseSQLQuery += " and lastname like '" + txtLastName.getText() + "%'";
 				if (txtFirstName.getText().length() > 0)
-					baseSQLQuery += " and firstname like '%" + txtFirstName.getText() + "%'";
+					baseSQLQuery += " and firstname like '" + txtFirstName.getText() + "%'";
 				if (txtPhoneNum.getText().length() > 0)
 					baseSQLQuery += " and phonenumber like '%" + txtPhoneNum.getText() + "%'";
-				if (txtDOB.getText().length() > 0)
-					baseSQLQuery += " and dateofbirth like '%" + txtDOB.getText() + "%'";
+//				if (txtDOB.getText().length() > 0)
+//					baseSQLQuery += " and dateofbirth like '" + txtDOB.getText() + "%'";
 				baseSQLQuery += ";";
 				System.out.println(baseSQLQuery);
 				
 				try {
 					listModel.clear();
 					Connection conn=DriverManager.getConnection("jdbc:mysql://99.98.84.144:3306/medprogram", "root", "medProgram");
+					//PreparedStatement pstmt = conn.prepareStatement(baseSQLQuery);
 					Statement stmt = conn.createStatement();
 					ResultSet loadPatients;
 								
@@ -237,7 +230,7 @@ public class PmtPatientSearch extends JFrame {
 				return values[index];
 			}
 		});
-		lstHeaders.setBounds(6, 73, 778, 16);
+		lstHeaders.setBounds(6, 73, 802, 16);
 		contentPane.add(lstHeaders);
 		
 		this.setLocationRelativeTo(getParent());
