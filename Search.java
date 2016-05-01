@@ -120,8 +120,12 @@ public class Search {
 					Connection conn=DriverManager.getConnection("jdbc:mysql://99.98.84.144:3306/medprogram", "root", "medProgram");
 					Statement stmt = conn.createStatement();
 					ResultSet rs;
-					rs = stmt.executeQuery("SELECT ap.apptid, ph.patientid,ph.firstname,ph.lastname,ap.appttime,ap.visitreason,st.statusdesc, CONCAT(u.firstname, ' ', u.lastname) as doctor FROM medprogram.patientheader ph JOIN medprogram.appointments ap on ap.patientid = ph.patientid JOIN medprogram.status st on st.statusid = ap.checkinstatus JOIN medprogram.user u on ap.doctor = u.userid "
-							+ "WHERE ap.isdeleted = 0 and ph.firstname like '%" + First_Name.getText() + "%' and ph.lastname like '%" + Last_Name.getText() + "%'");
+					String query = "SELECT ap.apptid, ph.patientid,ph.firstname,ph.lastname,ap.appttime,ap.visitreason,st.statusdesc, CONCAT(u.firstname, ' ', u.lastname) as doctor FROM medprogram.patientheader ph LEFT JOIN medprogram.appointments ap on ap.patientid = ph.patientid JOIN medprogram.status st on st.statusid = ap.checkinstatus JOIN medprogram.user u on ap.doctor = u.userid "
+							+ "WHERE ap.isdeleted = 0 and ph.firstname like ? and ph.lastname like ?";
+					PreparedStatement pstmt = conn.prepareStatement(query);
+					pstmt.setString(1, First_Name.getText());
+					pstmt.setString(2, Last_Name.getText());
+					rs = pstmt.executeQuery();
 					String test = null;
 					int count = 0;
 					if(rs.next()){
@@ -178,18 +182,8 @@ public class Search {
 				frmCheckin.dispose();
 			}
 		});
-		btnClose.setBounds(162, 163, 132, 38);
+		btnClose.setBounds(90, 165, 132, 38);
 		frmCheckin.getContentPane().add(btnClose);
-		
-		JButton btnAddPatient = new JButton("Add Patient");
-		btnAddPatient.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e) {
-				
-				System.out.println("test");
-			}
-		});
-		btnAddPatient.setBounds(162, 114, 132, 38);
-		frmCheckin.getContentPane().add(btnAddPatient);	
 		
 		JButton btnCreate = new JButton("Create Appointment");
 		btnCreate.addActionListener(new ActionListener() {
@@ -202,7 +196,7 @@ public class Search {
 			}
 		});
 		btnCreate.setFont(new Font("Lucida Grande", Font.PLAIN, 10));
-		btnCreate.setBounds(5, 165, 137, 38);
+		btnCreate.setBounds(177, 115, 137, 38);
 		frmCheckin.getContentPane().add(btnCreate);
 	}
 }

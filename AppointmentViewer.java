@@ -62,6 +62,9 @@ public class AppointmentViewer extends AbstractTableModel {
     	
     }
 
+	/**
+	 * @wbp.parser.entryPoint
+	 */
 	public static void main() {
 		try{
 			Connection myConn = DriverManager.getConnection("jdbc:mysql://99.98.84.144:3306/medprogram", "root", "medProgram");
@@ -69,9 +72,9 @@ public class AppointmentViewer extends AbstractTableModel {
 			Statement myStmt = myConn.createStatement();
 			int n = 0;
 			ResultSet myRes = myStmt.executeQuery("select patientheader.firstname, patientheader.lastname, appointments.appttime, A.lastname, appointments.visitreason, "
-					+ "appointments.comments, status.statusdesc, B.username from appointments "
-					+ "inner join patientheader on patientheader.patientid = appointments.patientid inner join user A on A.userid = appointments.doctor "
-					+ "inner join status on status.statusid = appointments.checkinstatus inner join user B on B.userid = appointments.creatoruser " 
+					+ "appointments.comments, status.statusdesc, B.username from patientheader "
+					+ "left outer join appointments on patientheader.patientid = appointments.patientid inner join user A on A.userid = appointments.doctor "
+					+ "left outer join status on status.statusid = appointments.checkinstatus inner join user B on B.userid = appointments.creatoruser " 
 					+ "where appointments.isdeleted = 0;");
 			
 				while (myRes.next()){

@@ -18,7 +18,7 @@ public class SuppliesViewer extends AbstractTableModel{
 			  "Reorder Quantity"};
 
 	//Two dimension array to hold the info each supply
-        private static Object[][] info = new String[20][6];
+        private static Object[][] info = new String[100][6];
 	
 	public int getColumnCount() {
 		return columnName.length;
@@ -97,6 +97,9 @@ public class SuppliesViewer extends AbstractTableModel{
     	
     }
 
+	/**
+	 * @wbp.parser.entryPoint
+	 */
 	public static void main() {
 		
 		try{

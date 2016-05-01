@@ -2,14 +2,17 @@ package medProgram;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.MaskFormatter;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -17,6 +20,11 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import com.toedter.calendar.JDateChooser;
+import javax.swing.JFormattedTextField;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import javax.swing.JComboBox;
+import javax.swing.DefaultComboBoxModel;
 
 public class AddPatient extends JFrame {
 
@@ -30,23 +38,23 @@ public class AddPatient extends JFrame {
 	private JTextField txtLastName;
 	private JTextField txtstreet;
 	private JTextField txtcity;
-	private JTextField txtstate;
+	private JComboBox cbxState;
 	private JTextField txtzipcode;
-	private JTextField txtphonenumber;
-	private JTextField txtgender;
+	private JFormattedTextField txtphonenumber;
+	private JComboBox cbxGender;
 	
 
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
-		new AddPatient("");
+		new AddPatient();
 	}
 
 	/**
 	 * Create the frame.
 	 */
-	public AddPatient(String username) {
+	public AddPatient() {
 		
 		setTitle("Add Patient");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -104,10 +112,10 @@ public class AddPatient extends JFrame {
 		contentPane.add(txtcity);
 		txtcity.setColumns(10);
 		
-		txtstate = new JTextField();
-		txtstate.setBounds(129, 254, 134, 28);
-		contentPane.add(txtstate);
-		txtstate.setColumns(10);
+		cbxState = new JComboBox();
+		cbxState.setModel(new DefaultComboBoxModel(new String[] {"ALABAMA - AL", "ALASKA - AK", "ARIZONA - AZ", "ARKANSAS - AR", "CALIFORNIA - CA", "COLORADO - CO", "CONNECTICUT - CT", "DELAWARE - DE", "FLORIDA - FL", "GEORGIA - GA", "HAWAII - HI", "IDAHO - ID", "ILLINOIS - IL", "INDIANA - IN", "IOWA - IA", "KANSAS - KS", "KENTUCKY - KY", "LOUISIANA - LA", "MAINE - ME", "MARYLAND - MD", "MASSACHUSETTS - MA", "MICHIGAN - MI", "MINNESOTA - MN", "MISSISSIPPI - MS", "MISSOURI - MO", "MONTANA - MT", "NEBRASKA - NE", "NEVADA - NV", "NEW HAMPSHIRE - NH", "NEW JERSEY - NJ", "NEW MEXICO - NM", "NEW YORK - NY", "NORTH CAROLINA - NC", "NORTH DAKOTA - ND", "OHIO - OH", "OKLAHOMA - OK", "OREGON - OR", "PENNSYLVANIA - PA", "RHODE ISLAND - RI", "SOUTH CAROLINA - SC", "SOUTH DAKOTA - SD", "TENNESSEE - TN", "TEXAS - TX", "UTAH - UT", "VERMONT - VT", "VIRGINIA - VA", "WASHINGTON - WA", "WEST VIRGINIA - WV", "WISCONSIN - WI", "WYOMING - WY", "GUAM - GU", "PUERTO RICO - PR", "VIRGIN ISLANDS - VI"}));
+		cbxState.setBounds(129, 254, 181, 28);
+		contentPane.add(cbxState);
 		
 		JLabel lblState = new JLabel("State:");
 		lblState.setBounds(6, 261, 46, 14);
@@ -126,14 +134,21 @@ public class AddPatient extends JFrame {
 		contentPane.add(txtzipcode);
 		txtzipcode.setColumns(10);
 		
-		txtphonenumber = new JTextField();
+		MaskFormatter phoneNum;
+		try {
+			phoneNum = new MaskFormatter("(###) ###-####");
+			txtphonenumber = new JFormattedTextField(phoneNum);
+		} catch (ParseException e2) {
+			txtphonenumber = new JFormattedTextField();
+			e2.printStackTrace();
+		}		
 		txtphonenumber.setBounds(127, 340, 136, 28);
 		contentPane.add(txtphonenumber);
 		
-		txtgender = new JTextField();
-		txtgender.setBounds(129, 135, 134, 29);
-		contentPane.add(txtgender);
-		txtgender.setColumns(10);
+		cbxGender = new JComboBox();
+		cbxGender.setModel(new DefaultComboBoxModel(new String[] {"Male", "Female"}));
+		cbxGender.setBounds(129, 135, 134, 29);
+		contentPane.add(cbxGender);
 		
 		JButton btnCancel = new JButton("Cancel");
 		btnCancel.addActionListener(new ActionListener() {
@@ -162,7 +177,8 @@ public class AddPatient extends JFrame {
 				
 				try {
 					Connection conn=DriverManager.getConnection("jdbc:mysql://99.98.84.144:3306/medprogram", "root", "medProgram");
-					Statement stmt = conn.createStatement();
+					//Statement stmt = conn.createStatement();
+					
 					
 					String firstName, lastName, gender, street, city, state, zipcode, phonenumber, finalDOB;
 					Date dateofbirth;
@@ -218,46 +234,63 @@ public class AddPatient extends JFrame {
 						city = txtcity.getText();						
 					}
 					
-					if(txtstate.getText().equals("")) {
-						JOptionPane.showMessageDialog(null,"Last name cannot be empty");
+					if(cbxState.getSelectedItem().equals("")) {
+						JOptionPane.showMessageDialog(null,"State cannot be empty");
 						return;
 					}
 					else {
-						state = txtstate.getText();						
+						String [] tmpState = cbxState.getSelectedItem().toString().split("-\\s");
+						state = tmpState[1];
 					}
 					
 					if(txtzipcode.getText().equals("")) {
-						JOptionPane.showMessageDialog(null,"Last name cannot be empty");
+						JOptionPane.showMessageDialog(null,"Zip Code cannot be empty");
 						return;
 					}
 					else {
 						zipcode = txtzipcode.getText();						
 					}
 					
-					if(txtphonenumber.getText().equals("")) {
-						JOptionPane.showMessageDialog(null,"Last name cannot be empty");
+					
+					String [] tmpText = txtphonenumber.getText().split("\\s+");
+					if(tmpText.length > 2) {
+						JOptionPane.showMessageDialog(null,"Phone number must be filled out as typical format: (123) 456-7890");
 						return;
 					}
 					else {
-						phonenumber = txtphonenumber.getText();						
+						phonenumber = txtphonenumber.getText();	
+						System.out.println(phonenumber);
 					}
 					
-					if(txtgender.getText().equals("")) {
-						JOptionPane.showMessageDialog(null,"Last name cannot be empty");
+					if(cbxGender.getSelectedItem().equals("")) {
+						JOptionPane.showMessageDialog(null,"Gender cannot be empty");
 						return;
 					}
 					else {
-						gender = txtgender.getText();						
+						gender = cbxGender.getSelectedItem().toString();						
 					}
 					
 					//end of form checking
+					String query = "Insert into patientheader (firstname, lastname, dateofbirth, gender, street, city, state, zipcode, phonenumber)" 
+							+ "Values (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+					PreparedStatement pstmt = conn.prepareStatement(query);
+					pstmt.setString(1, firstName);
+					pstmt.setString(2, lastName);
+					pstmt.setString(3, finalDOB);
+					pstmt.setString(4, gender);
+					pstmt.setString(5, street);
+					pstmt.setString(6, city);
+					pstmt.setString(7, state);
+					pstmt.setString(8, zipcode);
+					pstmt.setString(9, phonenumber);
 					
+					pstmt.executeUpdate();
 					
-					stmt.executeUpdate("Insert into patientheader (firstname, lastname, dateofbirth, gender, street, city, state, zipcode, phonenumber)" 
+					/*stmt.executeUpdate("Insert into patientheader (firstname, lastname, dateofbirth, gender, street, city, state, zipcode, phonenumber)" 
 							+ "Values ('" + firstName + "', '" + lastName + "', '" + finalDOB + "', '" + gender + "', '" + street + "', '" + city + "', '" + state + "', '" + zipcode + "', '" + 
-							phonenumber + "');");
-					
-					stmt.closeOnCompletion();
+							phonenumber + "');");*/
+					pstmt.closeOnCompletion();
+					//stmt.closeOnCompletion();
 					
 					conn.close();
 					

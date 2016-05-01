@@ -13,16 +13,16 @@ public class MainInterface extends JFrame implements ActionListener {
 	
 	JMenuBar mb = new JMenuBar();  
 	JMenu  ManaSystem,appoViewer,checkIn,medRecord,usersetting,GetHelp,Supplies; 
-	JMenuItem  outsystem,patientinfo,patientinfo1,addHospital,dropHospital,changepwd,addUser,aboutauthor,aboutsystem,usehelp,background,color1,manspace_1, 
- color2,color3, openApptViewer, openCheckIn,mntmOpenMedicalRecord,mntmRemoveUser,openSupplies;  
+	JMenuItem  outsystem,patientinfo,patientinfo1,addHospital,dropHospital,addUser,aboutauthor,aboutsystem,usehelp,background,color1,manspace_1, 
+ color2,color3, openApptViewer, openCheckIn,mntmOpenMedicalRecord,mntmRemoveUser,openSupplies, mntmTimeManagement,
+ mnPayment, mntmOpenPaymentWindow, mntmAddPatient;  
 	JMenu backcolor;  
 	JPanel jp=new JPanel(); 
 	Container cp=getContentPane();
 	String username; 
 	boolean isLoggedIn = false;
-	private JMenuItem mntmTimeManagement;
-//	private JMenuItem mntmOpenMedicalRecord;
-//	private JMenuItem mntmRemoveUser;
+	private JMenuItem mntmAddASupply;
+	private JMenuItem mntmViewOrganDonors;
 	
 	MainInterface(String username) { 
 		
@@ -66,9 +66,6 @@ public class MainInterface extends JFrame implements ActionListener {
 		//Log out in 'System Setting'
 		outsystem=new JMenuItem("Log Out");
 		
-		//Change password in 'User Setting'
-		changepwd=new JMenuItem("Change Password");  
-		
 		//Add user
 		//adduser=new JMenuItem("AddUser");   
 		
@@ -89,19 +86,33 @@ public class MainInterface extends JFrame implements ActionListener {
 		mb.add(medRecord);
 		mb.add(Supplies);
 		
+		mntmAddPatient = new JMenuItem("Add Patient");
+		medRecord.add(mntmAddPatient);
+		
 		mntmOpenMedicalRecord = new JMenuItem("Open Medical Record");
 		medRecord.add(mntmOpenMedicalRecord);
+		
+		mntmViewOrganDonors = new JMenuItem("View Organ Donors and Patients Needing Donations");
+		medRecord.add(mntmViewOrganDonors);
+		
+		mnPayment = new JMenu("Payment");
+		mb.add(mnPayment);
+		
+		mntmOpenPaymentWindow = new JMenuItem("Open Payment Window");
+		mnPayment.add(mntmOpenPaymentWindow);
 		mb.add(usersetting);  
 		mb.add(GetHelp);
 		ManaSystem.add(backcolor);   
 		ManaSystem.add(outsystem);
 		checkIn.add(openCheckIn);
 		appoViewer.add(openApptViewer);
+		
+		mntmAddASupply = new JMenuItem("Add A Supply");
+		Supplies.add(mntmAddASupply);
 		Supplies.add(openSupplies);
 		
-		mntmTimeManagement = new JMenuItem("Time Management");
+		mntmTimeManagement = new JMenuItem("Open Time Management");
 		appoViewer.add(mntmTimeManagement);
-		usersetting.add(changepwd);        
 		usersetting.add(addUser);    
 		
 		mntmRemoveUser = new JMenuItem("Remove User");
@@ -114,8 +125,7 @@ public class MainInterface extends JFrame implements ActionListener {
 		color3.addActionListener(this);  
 		
 		//Add action listener
-		outsystem.addActionListener(this);     
-		changepwd.addActionListener(this);
+		outsystem.addActionListener(this);
 		addUser.addActionListener(this);
 		mntmRemoveUser.addActionListener(this);
 		mntmOpenMedicalRecord.addActionListener(this);
@@ -127,6 +137,11 @@ public class MainInterface extends JFrame implements ActionListener {
 		openApptViewer.addActionListener(this);
 		openCheckIn.addActionListener(this);
 		mntmTimeManagement.addActionListener(this);
+		mntmOpenPaymentWindow.addActionListener(this);
+		mntmAddPatient.addActionListener(this);
+		mntmAddASupply.addActionListener(this);
+		mntmViewOrganDonors.addActionListener(this);
+
 		
 		
 		jp.setLayout(new BorderLayout());       
@@ -164,19 +179,15 @@ public class MainInterface extends JFrame implements ActionListener {
 					this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
 				}
 						
-		} 
-
-		if (e.getSource()==changepwd){ 
-			JOptionPane.showMessageDialog(this,"This feature has not been implemented yet.");
-		} 
+		}
 		if (e.getSource()==addUser){ 
 			new AddUser(username);   
 		} 
 		if (e.getSource()==aboutauthor){ 
-			JOptionPane.showMessageDialog(this,"This feature has not been implemented yet.");   
+			JOptionPane.showMessageDialog(this,"Created by Yirong Chen, Preston Evans, Robby Fry, Zach Kovach, and Benedit Molina. Copyright 2016");   
 		}
 		if (e.getSource()==aboutsystem){ 
-			JOptionPane.showMessageDialog(this,"This feature has not been implemented yet."); 
+			JOptionPane.showMessageDialog(this,"Medical Management System. Created by Group Six. Copyright 2016"); 
 		} 
 		if (e.getSource()==usehelp){ 
 			JOptionPane.showMessageDialog(this,"This feature has not been implemented yet.");   
@@ -197,8 +208,7 @@ public class MainInterface extends JFrame implements ActionListener {
    
 		//MEDICAL RECORD
 		if (e.getSource()==mntmOpenMedicalRecord){
-			MedRecords Records = new MedRecords();
-			Records.main();
+			new EditMedRecords();
 		} 
 		//SUPPLIES
 		if (e.getSource()==openSupplies){
@@ -211,6 +221,22 @@ public class MainInterface extends JFrame implements ActionListener {
 		
 		if (e.getSource() == mntmTimeManagement) {
 			new TimeManagement();
+		}
+		
+		if (e.getSource() == mntmAddPatient) {
+			new AddPatient();
+		}
+		
+		if (e.getSource() == mntmOpenPaymentWindow) {
+			new Payment();
+		}
+		
+		if (e.getSource() == mntmAddASupply) {
+			new SupplyAdd();
+		}
+		
+		if (e.getSource() == mntmViewOrganDonors) {
+			new OrganDonorSystem();
 		}
 	}
 

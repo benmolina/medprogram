@@ -27,6 +27,7 @@ public class ViewSupply extends JPanel implements TableModelListener{
 		
 		JScrollPane scrollPane = new JScrollPane(table);
 		
+		
 		add(scrollPane);
 		
 	}
